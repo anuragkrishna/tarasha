@@ -153,6 +153,9 @@ export default function DelayedRecall({ activityId, level, onDone, onBack }) {
           <button className="btn btn-primary w-full mt-16" onClick={checkRecall} disabled={!recalled.trim()}>
             {t('checkAnswers')}
           </button>
+          <button className="btn btn-ghost w-full" style={{ marginTop: 10 }} onClick={() => { setDistractIndex(0); setPhase('show') }}>
+            {t('showAgain')}
+          </button>
         </div>
       )}
 

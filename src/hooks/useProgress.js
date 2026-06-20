@@ -1,16 +1,13 @@
-import { useState, useCallback, useEffect } from 'react'
-import { buildDailyPlan, getMode } from '../dailyPlan'
+import { useState, useCallback } from 'react'
+import { getMode } from '../dailyPlan'
+import { buildLesson, lessonInfo } from '../lessons'
 import { ACTIVITIES } from '../data/activities'
 
 const CATEGORY_OF = Object.fromEntries(ACTIVITIES.map(a => [a.id, a.category]))
 
 const STORAGE_KEY = 'learnapp_progress'
-const PLAN_KEY = 'learnapp_dailyplan'
+const LESSON_KEY = 'learnapp_lessons'
 const DEFAULT_LEVEL = 1
-
-function todayStr() {
-  return new Date().toISOString().split('T')[0]
-}
 
 function load() {
   try {
@@ -27,47 +24,57 @@ function save(data) {
   } catch {}
 }
 
-function loadPlans() {
+function loadLessonMeta() {
   try {
-    const raw = localStorage.getItem(PLAN_KEY)
-    return raw ? JSON.parse(raw) : {}
+    const raw = localStorage.getItem(LESSON_KEY)
+    const m = raw ? JSON.parse(raw) : null
+    return m && typeof m.completed === 'number' ? m : { completed: 0, lastIds: [] }
   } catch {
-    return {}
+    return { completed: 0, lastIds: [] }
   }
 }
 
-function savePlans(p) {
-  try { localStorage.setItem(PLAN_KEY, JSON.stringify(p)) } catch {}
+function saveLessonMeta(m) {
+  try { localStorage.setItem(LESSON_KEY, JSON.stringify(m)) } catch {}
 }
 
 export function useProgress() {
   const [data, setData] = useState(() => load())
-  const [plans, setPlans] = useState(() => loadPlans())
+  const [lessonMeta, setLessonMeta] = useState(() => loadLessonMeta())
 
-  // Freeze today's plan once, so completing activities doesn't reshuffle the rest.
-  useEffect(() => {
-    const today = todayStr()
-    if (!plans[today]) {
-      const plan = buildDailyPlan(data, today)
-      const updated = { ...plans, [today]: plan }
-      setPlans(updated)
-      savePlans(updated)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // ---- Lessons (free-flow) ----
+
+  // The number of the lesson the learner is about to do (1-based).
+  const getLessonNumber = useCallback(() => (lessonMeta.completed || 0) + 1, [lessonMeta])
+  const getLessonsCompleted = useCallback(() => lessonMeta.completed || 0, [lessonMeta])
+
+  // Build the next lesson, adapting to past performance and the previous lesson.
+  const buildNextLesson = useCallback(() => buildLesson(data, lessonMeta), [data, lessonMeta])
+
+  // Difficulty / prebuilt info for the next lesson (for the dashboard card).
+  const getNextLessonInfo = useCallback(() => lessonInfo(lessonMeta.completed || 0), [lessonMeta])
+
+  // Mark a lesson finished: bump the count and remember its activities so the
+  // next lesson can avoid repeating them.
+  const completeLesson = useCallback((ids) => {
+    setLessonMeta(prev => {
+      const next = { completed: (prev.completed || 0) + 1, lastIds: ids || [] }
+      saveLessonMeta(next)
+      return next
+    })
   }, [])
 
-  const getTodayPlan = useCallback(() => {
-    const today = todayStr()
-    return plans[today] || buildDailyPlan(data, today)
-  }, [plans, data])
+  // ---- Per-activity level & results ----
 
   const getLevel = useCallback((activityId) => {
     return data[activityId]?.level || DEFAULT_LEVEL
   }, [data])
 
-  // Returns what the level WOULD become — does not save anything
-  const computeLevelChange = useCallback((activityId, score, total) => {
-    const currentLevel = data[activityId]?.level || DEFAULT_LEVEL
+  // What the saved level WOULD become after this result — does not save anything.
+  // `baseLevel` is the level the activity was actually played at (progressive
+  // lessons may run it above the saved level); falls back to the saved level.
+  const computeLevelChange = useCallback((activityId, score, total, baseLevel) => {
+    const currentLevel = baseLevel ?? (data[activityId]?.level || DEFAULT_LEVEL)
     const pct = total > 0 ? score / total : 0
     let newLevel = currentLevel
     if (pct >= 0.8 && currentLevel < 3) newLevel = currentLevel + 1
@@ -75,17 +82,17 @@ export function useProgress() {
     return { currentLevel, newLevel }
   }, [data])
 
-  // Save result with an explicit finalLevel chosen by the caregiver
-  const recordResult = useCallback((activityId, score, total, finalLevel, notes = '') => {
+  // Save a result. `finalLevel` becomes the new saved level; `playedLevel` is
+  // recorded in history as the level actually attempted.
+  const recordResult = useCallback((activityId, score, total, finalLevel, notes = '', playedLevel = null) => {
     const today = new Date().toISOString().split('T')[0]
     setData(prev => {
       const activity = prev[activityId] || { level: DEFAULT_LEVEL, history: [] }
-      const currentLevel = activity.level || DEFAULT_LEVEL
       const historyEntry = {
         date: today,
         score,
         total,
-        level: currentLevel,
+        level: playedLevel ?? activity.level ?? DEFAULT_LEVEL,
         notes,
         timestamp: Date.now()
       }
@@ -124,13 +131,6 @@ export function useProgress() {
       }
     })
     return result.sort((a, b) => b.timestamp - a.timestamp)
-  }, [data])
-
-  const isDoneToday = useCallback((activityId) => {
-    const today = new Date().toISOString().split('T')[0]
-    const activity = data[activityId]
-    if (!activity?.history?.length) return false
-    return activity.history.some(h => h.date === today)
   }, [data])
 
   const getStreak = useCallback(() => {
@@ -209,21 +209,21 @@ export function useProgress() {
     return set.size
   }, [data])
 
-  // Wipe all saved progress, levels, history and the frozen plans — start fresh.
+  // Wipe all saved progress, levels, history and lesson count — start fresh.
   const resetAll = useCallback(() => {
     try {
       localStorage.removeItem(STORAGE_KEY)
-      localStorage.removeItem(PLAN_KEY)
+      localStorage.removeItem(LESSON_KEY)
     } catch {}
     setData({})
-    const today = todayStr()
-    const fresh = { [today]: buildDailyPlan({}, today) }
-    setPlans(fresh)
-    savePlans(fresh)
+    const fresh = { completed: 0, lastIds: [] }
+    setLessonMeta(fresh)
+    saveLessonMeta(fresh)
   }, [])
 
   return {
-    getLevel, computeLevelChange, recordResult, setLevel, getFullLog, isDoneToday, getStreak,
-    getTodayPlan, getAverage, getWeeklyByCategory, getCompletedDays, resetAll,
+    getLevel, computeLevelChange, recordResult, setLevel, getFullLog, getStreak,
+    getLessonNumber, getLessonsCompleted, getNextLessonInfo, buildNextLesson, completeLesson,
+    getAverage, getWeeklyByCategory, getCompletedDays, resetAll,
   }
 }

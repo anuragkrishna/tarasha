@@ -115,6 +115,9 @@ export default function MemoryNumbers({ activityId, level, onDone, onBack }) {
           <button className="btn btn-primary w-full" onClick={submit} disabled={!typed}>
             {t('submit')}
           </button>
+          <button className="btn btn-ghost w-full" style={{ marginTop: 10 }} onClick={() => setPhase('show')}>
+            {t('showAgain')}
+          </button>
         </div>
       )}
 

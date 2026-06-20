@@ -10,7 +10,7 @@ export default function OddOneOut({ activityId, level, onDone, onBack }) {
 
   const [qIndex, setQIndex] = useState(0)
   const [selected, setSelected] = useState(null)
-  const [showFeedback, setShowFeedback] = useState(false)
+  const [answered, setAnswered] = useState(false)
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
 
@@ -37,35 +37,24 @@ export default function OddOneOut({ activityId, level, onDone, onBack }) {
   if (!question) return null
 
   function handleSelect(item) {
-    if (showFeedback) return
+    if (answered) return
     setSelected(item.label)
-    const correct = item.label === question.answer
-    if (correct) setScore(s => s + 1)
-    setShowFeedback(true)
-    setTimeout(() => {
-      setShowFeedback(false)
-      setSelected(null)
-      if (qIndex + 1 >= questions.length) setDone(true)
-      else setQIndex(i => i + 1)
-    }, 1400)
+    if (item.label === question.answer) setScore(s => s + 1)
+    setAnswered(true)
+  }
+
+  function next() {
+    setAnswered(false)
+    setSelected(null)
+    if (qIndex + 1 >= questions.length) setDone(true)
+    else setQIndex(i => i + 1)
   }
 
   const isCorrect = selected === question.answer
+  const isLast = qIndex + 1 >= questions.length
 
   return (
     <div className="page">
-      {showFeedback && (
-        <div className={`feedback-overlay ${isCorrect ? 'correct' : 'wrong'}`}>
-          <div className="feedback-icon">{isCorrect ? '✓' : '✗'}</div>
-          <div className="feedback-text">
-            {isCorrect ? t('correct') : t('answerWas', { a: question.answer })}
-          </div>
-          {!isCorrect && question.hint && (
-            <div style={{ color: 'white', fontSize: 20, opacity: 0.9 }}>{question.hint}</div>
-          )}
-        </div>
-      )}
-
       <div className="activity-header">
         <button className="back-btn" onClick={onBack}>←</button>
         <div className="activity-title">{pickField(activity, 'title', lang)}</div>
@@ -87,8 +76,10 @@ export default function OddOneOut({ activityId, level, onDone, onBack }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         {question.items.map((item, i) => {
           const isSelected = selected === item.label
-          const cardCorrect = isSelected && isCorrect
-          const cardWrong = isSelected && !isCorrect
+          const isAnswer = item.label === question.answer
+          // After answering: highlight the right answer green and a wrong pick red.
+          const cardCorrect = answered && isAnswer
+          const cardWrong = answered && isSelected && !isAnswer
 
           return (
             <button
@@ -99,12 +90,12 @@ export default function OddOneOut({ activityId, level, onDone, onBack }) {
                 border: `3px solid ${cardCorrect ? 'var(--success)' : cardWrong ? 'var(--error)' : 'var(--border)'}`,
                 borderRadius: 20,
                 padding: '24px 16px',
-                cursor: 'pointer',
+                cursor: answered ? 'default' : 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: 12,
-                boxShadow: isSelected ? 'none' : 'var(--shadow)',
+                boxShadow: answered ? 'none' : 'var(--shadow)',
                 transition: 'border-color 0.15s, background 0.15s',
               }}
             >
@@ -114,6 +105,25 @@ export default function OddOneOut({ activityId, level, onDone, onBack }) {
           )
         })}
       </div>
+
+      {answered && (
+        <>
+          <div style={{
+            marginTop: 16, padding: 14, borderRadius: 12,
+            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            color: isCorrect ? 'var(--success)' : 'var(--error)',
+            fontWeight: 600, fontSize: 19, textAlign: 'center',
+          }}>
+            {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('answerWas', { a: question.answer })}`}
+            {!isCorrect && question.hint && (
+              <div style={{ fontSize: 16, opacity: 0.9, marginTop: 4 }}>{question.hint}</div>
+            )}
+          </div>
+          <button className="btn btn-primary btn-lg w-full" style={{ marginTop: 16 }} onClick={next}>
+            {isLast ? t('finish') : t('nextQuestion')}
+          </button>
+        </>
+      )}
     </div>
   )
 }

@@ -11,7 +11,7 @@ export default function Categorisation({ activityId, level, onDone, onBack }) {
   const [rIndex, setRIndex] = useState(0)
   const [itemIndex, setItemIndex] = useState(0)
   const [selected, setSelected] = useState(null)
-  const [showFeedback, setShowFeedback] = useState(false)
+  const [answered, setAnswered] = useState(false)
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
 
@@ -39,38 +39,31 @@ export default function Categorisation({ activityId, level, onDone, onBack }) {
   const item = round.items[itemIndex]
 
   function handleSelect(category) {
-    if (showFeedback) return
+    if (answered) return
     setSelected(category.label)
     if (category.label === item.category) setScore(s => s + 1)
-    setShowFeedback(true)
-    setTimeout(() => {
-      setShowFeedback(false)
-      setSelected(null)
-      const lastItem = itemIndex + 1 >= round.items.length
-      if (!lastItem) {
-        setItemIndex(i => i + 1)
-      } else if (rIndex + 1 >= rounds.length) {
-        setDone(true)
-      } else {
-        setRIndex(i => i + 1)
-        setItemIndex(0)
-      }
-    }, 1200)
+    setAnswered(true)
+  }
+
+  function next() {
+    setAnswered(false)
+    setSelected(null)
+    const lastItem = itemIndex + 1 >= round.items.length
+    if (!lastItem) {
+      setItemIndex(i => i + 1)
+    } else if (rIndex + 1 >= rounds.length) {
+      setDone(true)
+    } else {
+      setRIndex(i => i + 1)
+      setItemIndex(0)
+    }
   }
 
   const isCorrect = selected === item.category
+  const isLast = itemIndex + 1 >= round.items.length && rIndex + 1 >= rounds.length
 
   return (
     <div className="page">
-      {showFeedback && (
-        <div className={`feedback-overlay ${isCorrect ? 'correct' : 'wrong'}`}>
-          <div className="feedback-icon">{isCorrect ? '✓' : '✗'}</div>
-          <div className="feedback-text">
-            {isCorrect ? t('correct') : t('isA', { label: item.label, category: item.category })}
-          </div>
-        </div>
-      )}
-
       <div className="activity-header">
         <button className="back-btn" onClick={onBack}>←</button>
         <div className="activity-title">{pickField(activity, 'title', lang)}</div>
@@ -91,11 +84,12 @@ export default function Categorisation({ activityId, level, onDone, onBack }) {
         <div style={{ fontSize: 26, fontWeight: 700 }}>{item.label}</div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: round.categories.length > 2 ? '1fr 1fr' : '1fr 1fr', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         {round.categories.map((cat, i) => {
-          const isSelected = selected === cat.label
-          const cardCorrect = isSelected && isCorrect
-          const cardWrong = isSelected && !isCorrect
+          const isAnswer = cat.label === item.category
+          // After answering: highlight the right category green and a wrong pick red.
+          const cardCorrect = answered && isAnswer
+          const cardWrong = answered && selected === cat.label && !isAnswer
           return (
             <button
               key={i}
@@ -105,12 +99,12 @@ export default function Categorisation({ activityId, level, onDone, onBack }) {
                 border: `3px solid ${cardCorrect ? 'var(--success)' : cardWrong ? 'var(--error)' : 'var(--border)'}`,
                 borderRadius: 20,
                 padding: '20px 16px',
-                cursor: 'pointer',
+                cursor: answered ? 'default' : 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: 10,
-                boxShadow: isSelected ? 'none' : 'var(--shadow)',
+                boxShadow: answered ? 'none' : 'var(--shadow)',
                 transition: 'border-color 0.15s, background 0.15s',
               }}
             >
@@ -120,6 +114,22 @@ export default function Categorisation({ activityId, level, onDone, onBack }) {
           )
         })}
       </div>
+
+      {answered && (
+        <>
+          <div style={{
+            marginTop: 16, padding: 14, borderRadius: 12,
+            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            color: isCorrect ? 'var(--success)' : 'var(--error)',
+            fontWeight: 600, fontSize: 19, textAlign: 'center',
+          }}>
+            {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('isA', { label: item.label, category: item.category })}`}
+          </div>
+          <button className="btn btn-primary btn-lg w-full" style={{ marginTop: 16 }} onClick={next}>
+            {isLast ? t('finish') : t('nextQuestion')}
+          </button>
+        </>
+      )}
     </div>
   )
 }

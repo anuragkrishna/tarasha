@@ -45,37 +45,30 @@ export default function ReverseCounting({ activityId, level, onDone, onBack }) {
   // step 0 = showing first number, steps 1..count = asking for next
   const shown = fullSeq.slice(0, step + 1)
   const nextCorrect = fullSeq[step + 1]
+  const answered = feedback !== null
+  const isLastStep = step + 1 >= seq.count
+  const isLastSeq = sIndex + 1 >= sequences.length
 
   function submit() {
     const correct = parseInt(typed) === nextCorrect
     setAttempts(a => a + 1)
     if (correct) setScore(s => s + 1)
     setFeedback(correct ? 'correct' : 'wrong')
-    setTimeout(() => {
-      setFeedback(null)
-      setTyped('')
-      const newStep = step + 1
-      if (newStep >= seq.count) {
-        // Sequence done, move to next
-        if (sIndex + 1 >= sequences.length) setDone(true)
-        else { setSIndex(i => i + 1); setStep(0) }
-      } else {
-        setStep(newStep)
-      }
-    }, 1000)
+  }
+
+  function next() {
+    setFeedback(null)
+    setTyped('')
+    if (isLastStep) {
+      if (isLastSeq) setDone(true)
+      else { setSIndex(i => i + 1); setStep(0) }
+    } else {
+      setStep(s => s + 1)
+    }
   }
 
   return (
     <div className="page">
-      {feedback && (
-        <div className={`feedback-overlay ${feedback}`}>
-          <div className="feedback-icon">{feedback === 'correct' ? '✓' : '✗'}</div>
-          <div className="feedback-text">
-            {feedback === 'correct' ? t('correct') : t('answerWas', { a: nextCorrect })}
-          </div>
-        </div>
-      )}
-
       <div className="activity-header">
         <button className="back-btn" onClick={onBack}>←</button>
         <div className="activity-title">{pickField(activity, 'title', lang)}</div>
@@ -101,9 +94,11 @@ export default function ReverseCounting({ activityId, level, onDone, onBack }) {
           <span style={{
             fontSize: 32, fontWeight: 700,
             padding: '8px 16px', borderRadius: 10,
-            border: '2px dashed var(--primary)',
-            color: 'var(--primary)', minWidth: 64, textAlign: 'center'
-          }}>?</span>
+            border: `2px ${answered ? 'solid' : 'dashed'} ${feedback === 'wrong' ? 'var(--error)' : feedback === 'correct' ? 'var(--success)' : 'var(--primary)'}`,
+            background: feedback === 'correct' ? '#EAFAF1' : feedback === 'wrong' ? '#FDEDEC' : 'transparent',
+            color: feedback === 'wrong' ? 'var(--error)' : feedback === 'correct' ? 'var(--success)' : 'var(--primary)',
+            minWidth: 64, textAlign: 'center'
+          }}>{answered ? nextCorrect : '?'}</span>
         </div>
       </div>
 
@@ -118,11 +113,28 @@ export default function ReverseCounting({ activityId, level, onDone, onBack }) {
           onChange={e => setTyped(e.target.value.replace(/\D/g, ''))}
           placeholder="?"
           autoFocus
-          onKeyDown={e => e.key === 'Enter' && typed && submit()}
+          disabled={answered}
+          onKeyDown={e => e.key === 'Enter' && typed && !answered && submit()}
         />
-        <button className="btn btn-primary w-full" onClick={submit} disabled={!typed}>
-          {t('submit')}
-        </button>
+        {!answered ? (
+          <button className="btn btn-primary w-full" onClick={submit} disabled={!typed}>
+            {t('submit')}
+          </button>
+        ) : (
+          <>
+            <div style={{
+              padding: 14, borderRadius: 12, marginBottom: 16,
+              background: feedback === 'correct' ? '#EAFAF1' : '#FDEDEC',
+              color: feedback === 'correct' ? 'var(--success)' : 'var(--error)',
+              fontWeight: 600, fontSize: 19, textAlign: 'center',
+            }}>
+              {feedback === 'correct' ? `✓ ${t('correct')}` : `✗ ${t('answerWas', { a: nextCorrect })}`}
+            </div>
+            <button className="btn btn-primary btn-lg w-full" onClick={next}>
+              {isLastStep && isLastSeq ? t('finish') : t('nextQuestion')}
+            </button>
+          </>
+        )}
       </div>
 
       <div className="text-center mt-16 text-muted">

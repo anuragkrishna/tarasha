@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Dashboard from './components/Dashboard'
 import Progress from './components/Progress'
-import ResultScreen from './components/ResultScreen'
 import OddOneOut from './components/activities/OddOneOut'
 import CopyText from './components/activities/CopyText'
 import MemoryNumbers from './components/activities/MemoryNumbers'
@@ -21,8 +20,9 @@ import DelayedRecall from './components/activities/DelayedRecall'
 import DescribePicture from './components/activities/DescribePicture'
 import BreathCount from './components/activities/BreathCount'
 import LanguageChooser from './components/LanguageChooser'
-import SessionSummary from './components/SessionSummary'
+import LessonSummary from './components/LessonSummary'
 import { useProgress } from './hooks/useProgress'
+import { getMode } from './dailyPlan'
 import { useLang } from './i18n'
 
 const ACTIVITY_COMPONENTS = {
@@ -48,67 +48,49 @@ const ACTIVITY_COMPONENTS = {
 
 export default function App() {
   const [screen, setScreen] = useState('dashboard')
-  const [currentActivityId, setCurrentActivityId] = useState(null)
-  const [pendingResult, setPendingResult] = useState(null) // { score, total, currentLevel, newLevel, notes }
-  const [sessionQueue, setSessionQueue] = useState(null)    // ids for today's guided session
-  const [sessionIndex, setSessionIndex] = useState(0)
+  const [lesson, setLesson] = useState(null)        // [{ id, level }] for the current lesson
+  const [lessonIndex, setLessonIndex] = useState(0)
+  const [lessonResults, setLessonResults] = useState([]) // [{ id, score, total, level, mode }]
+  const [lessonNumber, setLessonNumber] = useState(1)
   const progress = useProgress()
   const { lang } = useLang()
-  const inSession = sessionQueue !== null
 
-  // Single activity from the catalog (not a guided session)
-  function startActivity(id) {
-    setSessionQueue(null)
-    setCurrentActivityId(id)
+  const currentItem = lesson ? lesson[lessonIndex] : null
+
+  // Build and start the next lesson (adapts to past performance + previous lesson)
+  function startLesson() {
+    const next = progress.buildNextLesson()
+    if (!next.length) { setScreen('dashboard'); return }
+    setLessonNumber(progress.getLessonNumber())
+    setLesson(next)
+    setLessonIndex(0)
+    setLessonResults([])
     setScreen('activity')
   }
 
-  // Guided session: run today's plan, skipping anything already done today
-  function startSession() {
-    const plan = progress.getTodayPlan()
-    const queue = plan.filter(id => !progress.isDoneToday(id))
-    setSessionQueue(queue)
-    setSessionIndex(0)
-    if (queue.length === 0) {
-      setScreen('sessionSummary')
-    } else {
-      setCurrentActivityId(queue[0])
-      setScreen('activity')
-    }
-  }
-
-  function exitSession() {
-    setSessionQueue(null)
-    setSessionIndex(0)
-    setCurrentActivityId(null)
-    setPendingResult(null)
+  function exitLesson() {
+    setLesson(null)
+    setLessonIndex(0)
+    setLessonResults([])
     setScreen('dashboard')
   }
 
-  // Called when an activity finishes — show result screen before saving
+  // Activity finished — record the result silently and advance straight to the
+  // next activity (no intermediate recap screen). Level adjusts in the background.
   function onActivityDone(score, total, notes = '') {
-    const { currentLevel, newLevel } = progress.computeLevelChange(currentActivityId, score, total)
-    setPendingResult({ score, total, currentLevel, newLevel, notes })
-    setScreen('result')
-  }
+    const item = lesson[lessonIndex]
+    const { newLevel } = progress.computeLevelChange(item.id, score, total, item.level)
+    progress.recordResult(item.id, score, total, newLevel, notes, item.level)
+    const results = [...lessonResults, { id: item.id, score, total, level: item.level, mode: getMode(item.id) }]
+    setLessonResults(results)
 
-  // Called from ResultScreen with the caregiver's chosen final level
-  function onResultConfirmed(finalLevel, notes) {
-    progress.recordResult(currentActivityId, pendingResult.score, pendingResult.total, finalLevel, notes)
-    setPendingResult(null)
-    if (inSession) {
-      const nextIndex = sessionIndex + 1
-      if (nextIndex < sessionQueue.length) {
-        setSessionIndex(nextIndex)
-        setCurrentActivityId(sessionQueue[nextIndex])
-        setScreen('activity')
-      } else {
-        setCurrentActivityId(null)
-        setScreen('sessionSummary')
-      }
+    const nextIndex = lessonIndex + 1
+    if (nextIndex < lesson.length) {
+      setLessonIndex(nextIndex)
+      setScreen('activity')
     } else {
-      setCurrentActivityId(null)
-      setScreen('dashboard')
+      progress.completeLesson(lesson.map(q => q.id))
+      setScreen('lessonSummary')
     }
   }
 
@@ -120,45 +102,33 @@ export default function App() {
     return <Progress onBack={() => setScreen('dashboard')} progress={progress} />
   }
 
-  if (screen === 'sessionSummary') {
+  if (screen === 'lessonSummary') {
     return (
-      <SessionSummary
-        queue={sessionQueue || []}
-        progress={progress}
-        onDone={exitSession}
+      <LessonSummary
+        results={lessonResults}
+        lessonNumber={lessonNumber}
+        onNext={startLesson}
+        onDone={exitLesson}
       />
     )
   }
 
-  if (screen === 'result' && pendingResult) {
-    return (
-      <ResultScreen
-        activityId={currentActivityId}
-        result={pendingResult}
-        onConfirm={onResultConfirmed}
-        sessionStep={inSession ? { index: sessionIndex, total: sessionQueue.length } : null}
-      />
-    )
-  }
-
-  if (screen === 'activity' && currentActivityId) {
-    const ActivityComponent = ACTIVITY_COMPONENTS[currentActivityId]
+  if (screen === 'activity' && currentItem) {
+    const ActivityComponent = ACTIVITY_COMPONENTS[currentItem.id]
     if (!ActivityComponent) { setScreen('dashboard'); return null }
-    const level = progress.getLevel(currentActivityId)
     return (
       <ActivityComponent
-        activityId={currentActivityId}
-        level={level}
+        activityId={currentItem.id}
+        level={currentItem.level}
         onDone={onActivityDone}
-        onBack={inSession ? exitSession : () => { setScreen('dashboard'); setCurrentActivityId(null) }}
+        onBack={exitLesson}
       />
     )
   }
 
   return (
     <Dashboard
-      onStartActivity={startActivity}
-      onStartSession={startSession}
+      onStartLesson={startLesson}
       onViewLog={() => setScreen('log')}
       progress={progress}
     />

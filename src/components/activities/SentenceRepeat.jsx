@@ -114,6 +114,9 @@ export default function SentenceRepeat({ activityId, level, onDone, onBack }) {
           <button className="btn btn-primary w-full mt-16" onClick={submit} disabled={!typed.trim()}>
             {t('check')}
           </button>
+          <button className="btn btn-ghost w-full" style={{ marginTop: 10 }} onClick={() => setPhase('show')}>
+            {t('showAgain')}
+          </button>
         </div>
       )}
 

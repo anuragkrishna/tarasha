@@ -10,7 +10,7 @@ export default function MoneyTransaction({ activityId, level, onDone, onBack }) 
 
   const [qIndex, setQIndex] = useState(0)
   const [selected, setSelected] = useState(null)
-  const [showFeedback, setShowFeedback] = useState(false)
+  const [answered, setAnswered] = useState(false)
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
 
@@ -34,31 +34,24 @@ export default function MoneyTransaction({ activityId, level, onDone, onBack }) 
   if (!question) return null
 
   function handleSelect(opt) {
-    if (showFeedback) return
+    if (answered) return
     setSelected(opt)
     if (opt === question.answer) setScore(s => s + 1)
-    setShowFeedback(true)
-    setTimeout(() => {
-      setShowFeedback(false)
-      setSelected(null)
-      if (qIndex + 1 >= questions.length) setDone(true)
-      else setQIndex(i => i + 1)
-    }, 1400)
+    setAnswered(true)
+  }
+
+  function next() {
+    setAnswered(false)
+    setSelected(null)
+    if (qIndex + 1 >= questions.length) setDone(true)
+    else setQIndex(i => i + 1)
   }
 
   const isCorrect = selected === question.answer
+  const isLast = qIndex + 1 >= questions.length
 
   return (
     <div className="page">
-      {showFeedback && (
-        <div className={`feedback-overlay ${isCorrect ? 'correct' : 'wrong'}`}>
-          <div className="feedback-icon">{isCorrect ? '✓' : '✗'}</div>
-          <div className="feedback-text">
-            {isCorrect ? t('correct') : t('answerWas', { a: question.answer })}
-          </div>
-        </div>
-      )}
-
       <div className="activity-header">
         <button className="back-btn" onClick={onBack}>←</button>
         <div className="activity-title">{pickField(activity, 'title', lang)}</div>
@@ -77,17 +70,39 @@ export default function MoneyTransaction({ activityId, level, onDone, onBack }) 
       </div>
 
       <div className="choice-grid">
-        {question.options.map((opt, i) => (
-          <button
-            key={i}
-            className={`choice-btn ${selected === opt ? (opt === question.answer ? 'correct' : 'wrong') : ''}`}
-            style={{ fontSize: 26, fontWeight: 700 }}
-            onClick={() => handleSelect(opt)}
-          >
-            {opt}
-          </button>
-        ))}
+        {question.options.map((opt, i) => {
+          // After answering: highlight the right answer green and a wrong pick red.
+          const cls = answered
+            ? (opt === question.answer ? 'correct' : opt === selected ? 'wrong' : '')
+            : ''
+          return (
+            <button
+              key={i}
+              className={`choice-btn ${cls}`}
+              style={{ fontSize: 26, fontWeight: 700 }}
+              onClick={() => handleSelect(opt)}
+            >
+              {opt}
+            </button>
+          )
+        })}
       </div>
+
+      {answered && (
+        <>
+          <div style={{
+            marginTop: 20, padding: 14, borderRadius: 12,
+            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            color: isCorrect ? 'var(--success)' : 'var(--error)',
+            fontWeight: 600, fontSize: 19, textAlign: 'center',
+          }}>
+            {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('answerWas', { a: question.answer })}`}
+          </div>
+          <button className="btn btn-primary btn-lg w-full" style={{ marginTop: 16 }} onClick={next}>
+            {isLast ? t('finish') : t('nextQuestion')}
+          </button>
+        </>
+      )}
     </div>
   )
 }
