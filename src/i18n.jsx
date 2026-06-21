@@ -325,7 +325,7 @@ const STRINGS = {
     signOut: 'साइन आउट',
     languageLabel: 'भाषा',
 
-    landingHeadline: 'दिमाग़ को सक्रिय रखें',
+    landingHeadline: 'दिमाग़ को active रखें',
     landingSub: 'छोटे, आसान दिमाग़ी अभ्यास — याददाश्त, ध्यान और भाषा — हर दिन लगभग 10 मिनट में। English और हिंदी में।',
     landingSignIn: 'Google लॉगिन',
     landingGuest: 'मेहमान के रूप में जारी रखें',
