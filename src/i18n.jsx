@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react'
+import { track } from './firebase'
 
 const LANG_KEY = 'learnapp_lang'
 
@@ -30,6 +31,21 @@ const STRINGS = {
     curriculumTitle: 'Your lessons',
     lessonItems: '{n} activities • ~10 min',
     startLessonN: 'Start Lesson {n}',
+
+    // Profile / account
+    account: 'Account',
+    guest: 'Guest',
+    signInGoogle: 'Sign in with Google',
+    signOut: 'Sign out',
+    languageLabel: 'Language',
+
+    // Landing page
+    landingHeadline: 'Stay Mentally Engaged',
+    landingSub: 'Short, friendly brain exercises — memory, attention and language — in about 10 minutes a day. In English and हिंदी.',
+    landingSignIn: 'Google Login',
+    landingGuest: 'Continue as Guest',
+    landingNoAuth: 'Sign-in is being set up — you can start right away below.',
+    landingFootnote: 'Sign in to save your progress and pick up on any device.',
 
     // Daily plan + guided session
     todaysPlan: "Today's Plan",
@@ -303,6 +319,19 @@ const STRINGS = {
     lessonItems: '{n} काम • ~10 मिनट',
     startLessonN: 'पाठ {n} शुरू करें',
 
+    account: 'खाता',
+    guest: 'मेहमान',
+    signInGoogle: 'Google से साइन इन करें',
+    signOut: 'साइन आउट',
+    languageLabel: 'भाषा',
+
+    landingHeadline: 'दिमाग़ को सक्रिय रखें',
+    landingSub: 'छोटे, आसान दिमाग़ी अभ्यास — याददाश्त, ध्यान और भाषा — हर दिन लगभग 10 मिनट में। English और हिंदी में।',
+    landingSignIn: 'Google लॉगिन',
+    landingGuest: 'मेहमान के रूप में जारी रखें',
+    landingNoAuth: 'साइन-इन तैयार किया जा रहा है — आप नीचे से अभी शुरू कर सकते हैं।',
+    landingFootnote: 'प्रोग्रेस सेव करने और किसी भी डिवाइस पर जारी रखने के लिए साइन इन करें।',
+
     todaysPlan: 'आज का प्लान',
     planSubtitle: 'आज के लिए चुने गए काम',
     startSession: 'आज का अभ्यास शुरू करें',
@@ -544,6 +573,7 @@ export function LanguageProvider({ children }) {
   const setLang = useCallback((l) => {
     setLangState(l)
     try { localStorage.setItem(LANG_KEY, l) } catch {}
+    track('language_select', { language: l })
   }, [])
 
   const t = useCallback((key, params) => {

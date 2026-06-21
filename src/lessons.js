@@ -152,13 +152,15 @@ function buildAdaptiveLesson(data, lessonMeta) {
 //   data       — per-activity progress { [id]: { level, history } }
 //   lessonMeta — { completed: number, lastIds: string[] }
 // Returns an ordered (randomised) list of { id, level }.
-export function buildLesson(data, lessonMeta = {}) {
-  const completed = lessonMeta.completed || 0
+export function buildLesson(data, lessonMeta = {}, lessonIndex) {
+  // Which lesson to build (0-based). Defaults to the next uncompleted one, but a
+  // specific index can be passed to (re)play an already-unlocked prebuilt lesson.
+  const idx = lessonIndex == null ? (lessonMeta.completed || 0) : lessonIndex
 
   let picks
-  if (completed < PREBUILT.length) {
+  if (idx < PREBUILT.length) {
     // Prebuilt curriculum lesson at its fixed difficulty.
-    const plan = PREBUILT[completed]
+    const plan = PREBUILT[idx]
     picks = plan.ids.map(id => ({ id, category: CATEGORY_OF[id], level: clampLevel(id, plan.level) }))
   } else {
     picks = buildAdaptiveLesson(data, lessonMeta)

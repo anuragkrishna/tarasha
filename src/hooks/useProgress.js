@@ -1,4 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '../firebase'
 import { getMode } from '../dailyPlan'
 import { buildLesson, lessonInfo } from '../lessons'
 import { ACTIVITIES } from '../data/activities'
@@ -38,9 +40,47 @@ function saveLessonMeta(m) {
   try { localStorage.setItem(LESSON_KEY, JSON.stringify(m)) } catch {}
 }
 
-export function useProgress() {
+export function useProgress(user) {
   const [data, setData] = useState(() => load())
   const [lessonMeta, setLessonMeta] = useState(() => loadLessonMeta())
+
+  // ---- Cloud sync (Firestore) — only when signed in ----
+  const uid = user?.uid || null
+  const syncReady = useRef(false)
+  const latest = useRef({ data, lessonMeta })
+  latest.current = { data, lessonMeta }
+
+  // On sign-in: pull the user's cloud progress (or seed it from local on first login).
+  useEffect(() => {
+    if (!uid || !db) { syncReady.current = false; return }
+    let cancelled = false
+    syncReady.current = false
+    ;(async () => {
+      try {
+        const ref = doc(db, 'users', uid)
+        const snap = await getDoc(ref)
+        if (cancelled) return
+        if (snap.exists()) {
+          const d = snap.data()
+          if (d.progress) { setData(d.progress); save(d.progress) }
+          if (d.lessons) { setLessonMeta(d.lessons); saveLessonMeta(d.lessons) }
+        } else {
+          // First sign-in: migrate whatever's on this device up to the cloud.
+          const { data: ld, lessonMeta: lm } = latest.current
+          await setDoc(ref, { progress: ld, lessons: lm, updatedAt: Date.now() })
+        }
+      } catch { /* offline / rules — stay on local */ }
+      if (!cancelled) syncReady.current = true
+    })()
+    return () => { cancelled = true }
+  }, [uid])
+
+  // Push changes to the cloud while signed in (skips the initial hydration).
+  useEffect(() => {
+    if (!uid || !db || !syncReady.current) return
+    setDoc(doc(db, 'users', uid), { progress: data, lessons: lessonMeta, updatedAt: Date.now() }, { merge: true })
+      .catch(() => {})
+  }, [data, lessonMeta, uid])
 
   // ---- Lessons (free-flow) ----
 
@@ -48,17 +88,20 @@ export function useProgress() {
   const getLessonNumber = useCallback(() => (lessonMeta.completed || 0) + 1, [lessonMeta])
   const getLessonsCompleted = useCallback(() => lessonMeta.completed || 0, [lessonMeta])
 
-  // Build the next lesson, adapting to past performance and the previous lesson.
-  const buildNextLesson = useCallback(() => buildLesson(data, lessonMeta), [data, lessonMeta])
+  // Build a lesson — the next one by default, or a specific (unlocked) index.
+  const buildNextLesson = useCallback((index) => buildLesson(data, lessonMeta, index), [data, lessonMeta])
 
   // Difficulty / prebuilt info for the next lesson (for the dashboard card).
   const getNextLessonInfo = useCallback(() => lessonInfo(lessonMeta.completed || 0), [lessonMeta])
 
-  // Mark a lesson finished: bump the count and remember its activities so the
-  // next lesson can avoid repeating them.
-  const completeLesson = useCallback((ids) => {
+  // Mark a lesson finished. Only advances the curriculum pointer when the
+  // just-finished lesson is the current one (replaying an earlier lesson doesn't
+  // change progress). Always remembers its activities to avoid repeats next time.
+  const completeLesson = useCallback((ids, lessonIndex) => {
     setLessonMeta(prev => {
-      const next = { completed: (prev.completed || 0) + 1, lastIds: ids || [] }
+      const cur = prev.completed || 0
+      const completed = (lessonIndex == null || lessonIndex >= cur) ? (lessonIndex == null ? cur + 1 : lessonIndex + 1) : cur
+      const next = { completed, lastIds: ids || [] }
       saveLessonMeta(next)
       return next
     })

@@ -68,7 +68,7 @@ export default function ClockCanvas({ resetKey }) {
     ctx.beginPath()
     ctx.moveTo(lastPos.current.x, lastPos.current.y)
     ctx.lineTo(pos.x, pos.y)
-    ctx.strokeStyle = '#14B8A6'
+    ctx.strokeStyle = '#1B2A4E'
     ctx.lineWidth = 5
     ctx.lineCap = 'round'
     ctx.stroke()

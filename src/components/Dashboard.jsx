@@ -1,5 +1,6 @@
 import { useLang } from '../i18n'
 import { PREBUILT, PREBUILT_COUNT } from '../lessons'
+import ProfileMenu from './ProfileMenu'
 
 // Skill pillars (= activity categories) a lesson mixes across.
 const PILLARS = [
@@ -41,38 +42,41 @@ function DifficultyChip({ level }) {
   )
 }
 
-// One row in the 5-lesson curriculum ladder.
-function LadderRow({ n, level, status, count, onStart, last }) {
+// One tile in the 2-column curriculum grid.
+function LessonTile({ n, level, status, count, onStart }) {
   const { t } = useLang()
   const isCurrent = status === 'current'
+  const locked = status === 'upcoming'
   const icon = status === 'done' ? '✓' : status === 'current' ? '▶' : '🔒'
   const iconColor = status === 'done' ? 'var(--success)' : status === 'current' ? 'var(--primary)' : 'var(--border)'
 
   return (
     <div
-      onClick={isCurrent ? onStart : undefined}
+      onClick={locked ? undefined : onStart}
       style={{
-        display: 'flex', alignItems: 'center', gap: 14,
-        padding: '14px 16px',
-        cursor: isCurrent ? 'pointer' : 'default',
-        opacity: status === 'upcoming' ? 0.5 : 1,
-        background: isCurrent ? 'var(--primary-soft, rgba(0,0,0,0.03))' : 'transparent',
-        borderRadius: 12,
-        border: isCurrent ? '2px solid var(--primary)' : '2px solid transparent',
-        borderBottom: !isCurrent && !last ? '1px solid var(--border)' : undefined,
+        display: 'flex', flexDirection: 'column', gap: 10,
+        padding: 16,
+        cursor: locked ? 'default' : 'pointer',
+        opacity: locked ? 0.55 : 1,
+        background: isCurrent ? 'var(--primary-soft, rgba(27,42,78,0.07))' : 'var(--surface)',
+        borderRadius: 14,
+        border: isCurrent ? '2px solid var(--primary)' : '2px solid var(--border)',
+        boxShadow: isCurrent ? 'none' : 'var(--shadow)',
       }}
     >
-      <span style={{
-        width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 16, fontWeight: 800, color: iconColor,
-        border: `2px solid ${iconColor}`,
-      }}>{icon}</span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 17, fontWeight: 700 }}>{t('lessonN', { n })}</div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{t('lessonItems', { n: count })}</div>
+      <div className="flex items-center justify-between">
+        <span style={{
+          width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 15, fontWeight: 800, color: iconColor,
+          border: `2px solid ${iconColor}`,
+        }}>{icon}</span>
+        <DifficultyChip level={level} />
       </div>
-      <DifficultyChip level={level} />
+      <div>
+        <div style={{ fontSize: 17, fontWeight: 700 }}>{t('lessonN', { n })}</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t('lessonItems', { n: count })}</div>
+      </div>
     </div>
   )
 }
@@ -84,29 +88,34 @@ function Curriculum({ progress, onStartLesson }) {
 
   return (
     <>
-      <div className="card mb-16" style={{ padding: '8px 8px 12px' }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, padding: '12px 12px 6px' }}>
+      <div className="mb-16">
+        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}>
           {t('curriculumTitle')}
         </div>
-        {PREBUILT.map((plan, i) => {
-          const status = i < completed ? 'done' : i === completed ? 'current' : 'upcoming'
-          return (
-            <LadderRow
-              key={i}
-              n={i + 1}
-              level={plan.level}
-              count={plan.ids.length}
-              status={status}
-              onStart={onStartLesson}
-              last={i === PREBUILT.length - 1}
-            />
-          )
-        })}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          {PREBUILT.map((plan, i) => {
+            const status = i < completed ? 'done' : i === completed ? 'current' : 'upcoming'
+            return (
+              <LessonTile
+                key={i}
+                n={i + 1}
+                level={plan.level}
+                count={plan.ids.length}
+                status={status}
+                onStart={() => onStartLesson(i)}
+              />
+            )
+          })}
+        </div>
       </div>
 
-      {/* Once the curriculum is done, every further lesson is adaptive. */}
+      {/* Once the curriculum is done, every further lesson is adaptive — tap to start. */}
       {completed >= PREBUILT_COUNT && (
-        <div className="card mb-16" style={{ padding: '24px', border: '2px solid var(--primary)' }}>
+        <div
+          className="card mb-16"
+          onClick={() => onStartLesson(completed)}
+          style={{ padding: '24px', border: '2px solid var(--primary)', cursor: 'pointer' }}
+        >
           <div className="flex items-center justify-between mb-8">
             <div>
               <div style={{ fontSize: 24, fontWeight: 700 }}>{t('lessonN', { n: completed + 1 })}</div>
@@ -117,17 +126,8 @@ function Curriculum({ progress, onStartLesson }) {
               <DifficultyChip level={info.level} />
             </div>
           </div>
-          <div style={{ margin: '14px 0 16px' }}><PillarChips /></div>
-          <button className="btn btn-primary btn-lg w-full" onClick={onStartLesson}>
-            {t('startLesson')}
-          </button>
+          <div style={{ marginTop: 14 }}><PillarChips /></div>
         </div>
-      )}
-
-      {completed < PREBUILT_COUNT && (
-        <button className="btn btn-primary btn-lg w-full" onClick={onStartLesson}>
-          {t('startLessonN', { n: completed + 1 })}
-        </button>
       )}
 
       {completed > 0 && (
@@ -139,8 +139,8 @@ function Curriculum({ progress, onStartLesson }) {
   )
 }
 
-export default function Dashboard({ onStartLesson, onViewLog, progress }) {
-  const { t, lang, setLang } = useLang()
+export default function Dashboard({ onStartLesson, onViewLog, progress, user, authConfigured, signIn, signOut }) {
+  const { t } = useLang()
 
   return (
     <div className="page">
@@ -149,28 +149,14 @@ export default function Dashboard({ onStartLesson, onViewLog, progress }) {
           <h1>Tarasha</h1>
           <p className="text-muted">{t('lessonTagline')}</p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {/* Language toggle */}
-          <button
-            className="btn btn-ghost"
-            onClick={() => setLang(lang === 'hi' ? 'en' : 'hi')}
-            style={{ minWidth: 'unset', padding: '12px 16px', minHeight: 'unset' }}
-            title="Switch language"
-          >
-            {lang === 'hi' ? 'EN' : 'हिं'}
-          </button>
-          <button className="btn btn-ghost" onClick={onViewLog} style={{ minWidth: 'unset', padding: '12px 20px', minHeight: 'unset' }}>
-            📊 {t('progress')}
-          </button>
-          <button
-            className="btn btn-ghost"
-            onClick={() => { if (window.confirm(t('resetConfirm'))) progress.resetAll() }}
-            style={{ minWidth: 'unset', padding: '12px 16px', minHeight: 'unset' }}
-            title={t('reset')}
-          >
-            🔄
-          </button>
-        </div>
+        <ProfileMenu
+          user={user}
+          configured={authConfigured}
+          signIn={signIn}
+          signOut={signOut}
+          onViewLog={onViewLog}
+          onReset={() => { if (window.confirm(t('resetConfirm'))) progress.resetAll() }}
+        />
       </div>
 
       <Curriculum progress={progress} onStartLesson={onStartLesson} />
