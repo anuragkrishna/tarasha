@@ -20,14 +20,12 @@ import Categorisation from './components/activities/Categorisation'
 import DelayedRecall from './components/activities/DelayedRecall'
 import DescribePicture from './components/activities/DescribePicture'
 import BreathCount from './components/activities/BreathCount'
-import LanguageChooser from './components/LanguageChooser'
 import LessonSummary from './components/LessonSummary'
 import { useProgress } from './hooks/useProgress'
 import { useAuth } from './hooks/useAuth'
 import { getMode } from './dailyPlan'
 import { lessonInfo } from './lessons'
 import { track } from './firebase'
-import { useLang } from './i18n'
 
 const ACTIVITY_COMPONENTS = {
   'odd-one-out': OddOneOut,
@@ -59,7 +57,6 @@ export default function App() {
   const [playedLessonIndex, setPlayedLessonIndex] = useState(0)
   const auth = useAuth()
   const progress = useProgress(auth.user)
-  const { lang } = useLang()
 
   // Light path routing: "/" = landing, "/app" = the app.
   const [path, setPath] = useState(() => window.location.pathname)
@@ -136,10 +133,6 @@ export default function App() {
       track('lesson_complete', { lesson_number: playedLessonIndex + 1, activities: results.length, score_pct: scorePct })
       setScreen('lessonSummary')
     }
-  }
-
-  if (!lang) {
-    return <LanguageChooser />
   }
 
   if (!isAppRoute) {

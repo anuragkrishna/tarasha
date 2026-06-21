@@ -31,17 +31,23 @@ export default function Landing({ configured, signIn, onGuest }) {
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 24, background: '#E8E8E8',
     }}>
-      {/* Language toggle */}
-      <button
-        onClick={() => setLang(lang === 'hi' ? 'en' : 'hi')}
-        style={{
-          position: 'fixed', top: 16, right: 16, zIndex: 10,
-          background: 'transparent', color: 'var(--primary)', border: '2px solid var(--primary)',
-          borderRadius: 999, padding: '8px 16px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-        }}
-      >
-        {lang === 'hi' ? 'English' : 'हिंदी'}
-      </button>
+      {/* Language options */}
+      <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 10, display: 'flex', gap: 8 }}>
+        {[['en', 'English'], ['hi', 'हिंदी']].map(([code, label]) => (
+          <button
+            key={code}
+            onClick={() => setLang(code)}
+            style={{
+              borderRadius: 999, padding: '8px 16px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+              border: '2px solid var(--primary)',
+              background: lang === code ? 'var(--primary)' : 'transparent',
+              color: lang === code ? '#fff' : 'var(--primary)',
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
       <div style={{
         display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center',

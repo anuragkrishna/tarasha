@@ -266,36 +266,7 @@ function ReportTab({ progress, t, lang }) {
 
 export default function Progress({ onBack, progress }) {
   const { t, lang } = useLang()
-  const [pin, setPin] = useState('')
-  const [unlocked, setUnlocked] = useState(false)
   const [tab, setTab] = useState('trends')
-  const PIN = '1234'
-
-  if (!unlocked) {
-    const tryUnlock = () => { if (pin === PIN) setUnlocked(true); else alert(t('wrongPin')) }
-    return (
-      <div className="page" style={{ maxWidth: 400, margin: '0 auto' }}>
-        <div className="activity-header">
-          <button className="back-btn" onClick={onBack}>←</button>
-          <h2 className="activity-title">{t('progress')}</h2>
-        </div>
-        <div className="card text-center" style={{ marginTop: 60 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
-          <h3 style={{ marginBottom: 8 }}>{t('caregiverView')}</h3>
-          <p className="text-muted mb-24">{t('enterPinToView')}</p>
-          <input
-            className="input text-center" type="password" inputMode="numeric"
-            placeholder={t('enterPin')} value={pin}
-            onChange={e => setPin(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') tryUnlock() }}
-            style={{ marginBottom: 16, fontSize: 28, letterSpacing: 8 }}
-          />
-          <button className="btn btn-primary w-full" onClick={tryUnlock}>{t('unlock')}</button>
-          <p className="text-muted mt-16" style={{ fontSize: 16 }}>{t('defaultPin')}</p>
-        </div>
-      </div>
-    )
-  }
 
   const TABS = [
     { id: 'trends', label: t('tabTrends') },
