@@ -91,28 +91,31 @@ export default function SingleQuiz({ question, isLast, onNext, onBack }) {
         </div>
       )}
 
-      {checked && (
-        <div style={{
-          marginTop: 16, padding: 14, borderRadius: 12,
-          background: isCorrect ? '#EAFAF1' : '#FDEDEC',
-          color: isCorrect ? 'var(--success)' : 'var(--error)',
-          fontWeight: 600, fontSize: 19, textAlign: 'center',
-        }}>
-          {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('answerWas', { a: question.answer })}`}
-          {!isCorrect && question.hint && (
-            <div style={{ fontSize: 16, opacity: 0.9, marginTop: 4 }}>{question.hint}</div>
-          )}
-        </div>
-      )}
+      {/* Reserved space so the button stays put whether or not feedback shows. */}
+      <div style={{ minHeight: 72, marginTop: 16, display: 'flex', alignItems: 'center' }}>
+        {checked && (
+          <div style={{
+            width: '100%', padding: 14, borderRadius: 12,
+            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            color: isCorrect ? 'var(--success)' : 'var(--error)',
+            fontWeight: 600, fontSize: 19, textAlign: 'center',
+          }}>
+            {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('answerWas', { a: question.answer })}`}
+            {!isCorrect && question.hint && (
+              <div style={{ fontSize: 16, opacity: 0.9, marginTop: 4 }}>{question.hint}</div>
+            )}
+          </div>
+        )}
+      </div>
 
       {checked ? (
-        <button className="btn btn-primary btn-lg w-full" style={{ marginTop: 16 }} onClick={() => onNext(isCorrect)}>
+        <button className="btn btn-primary btn-lg w-full" onClick={() => onNext(isCorrect)}>
           {isLast ? t('finish') : t('nextQuestion')}
         </button>
       ) : (
         <button
           className="btn btn-primary btn-lg w-full"
-          style={{ marginTop: 16, opacity: selected == null ? 0.5 : 1 }}
+          style={{ opacity: selected == null ? 0.5 : 1 }}
           disabled={selected == null}
           onClick={check}
         >

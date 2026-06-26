@@ -36,6 +36,9 @@ const STRINGS = {
     account: 'Account',
     guest: 'Guest',
     signInGoogle: 'Sign in with Google',
+    gateTitle: 'Sign in to continue',
+    gateSub: 'Sign in with Google to keep doing lessons and save your progress across devices.',
+    continueBtn: 'Continue',
     signOut: 'Sign out',
     languageLabel: 'Language',
 
@@ -353,6 +356,9 @@ const STRINGS = {
     account: 'खाता',
     guest: 'मेहमान',
     signInGoogle: 'Google से साइन इन करें',
+    gateTitle: 'जारी रखने के लिए साइन इन करें',
+    gateSub: 'लेसन जारी रखने और सभी डिवाइस पर प्रगति सहेजने के लिए Google से साइन इन करें।',
+    continueBtn: 'जारी रखें',
     signOut: 'साइन आउट',
     languageLabel: 'भाषा',
 

@@ -155,7 +155,6 @@ export default function Dashboard({ onStartLesson, onViewLog, progress, user, au
           signIn={signIn}
           signOut={signOut}
           onViewLog={onViewLog}
-          onReset={() => { if (window.confirm(t('resetConfirm'))) progress.resetAll() }}
         />
       </div>
 

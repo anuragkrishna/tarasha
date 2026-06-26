@@ -103,20 +103,23 @@ export default function MemoryNumbers({ activityId, level, exposure = 0, onDone,
             disabled={submitted}
           />
 
-          {submitted && (
-            <div style={{
-              padding: 14, borderRadius: 12, marginBottom: 16, textAlign: 'center',
-              background: isCorrect ? '#EAFAF1' : '#FDEDEC',
-              color: isCorrect ? 'var(--success)' : 'var(--error)', fontWeight: 600, fontSize: 19,
-            }}>
-              {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('notQuite')}`}
-              {!isCorrect && (
-                <div style={{ marginTop: 4, fontSize: 16 }}>
-                  {t('numberWas')} <strong style={{ letterSpacing: 3 }}>{number}</strong>
-                </div>
-              )}
-            </div>
-          )}
+          {/* Reserved space so the button stays put whether or not feedback shows. */}
+          <div style={{ minHeight: 72, marginBottom: 16, display: 'flex', alignItems: 'center' }}>
+            {submitted && (
+              <div style={{
+                width: '100%', padding: 14, borderRadius: 12, textAlign: 'center',
+                background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+                color: isCorrect ? 'var(--success)' : 'var(--error)', fontWeight: 600, fontSize: 19,
+              }}>
+                {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('notQuite')}`}
+                {!isCorrect && (
+                  <div style={{ marginTop: 4, fontSize: 16 }}>
+                    {t('numberWas')} <strong style={{ letterSpacing: 3 }}>{number}</strong>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           {!submitted ? (
             <>

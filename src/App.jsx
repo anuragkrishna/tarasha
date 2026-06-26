@@ -109,6 +109,11 @@ export default function App() {
 
   // Start a lesson by index (a tile tap), or the next one by default.
   function startLesson(lessonIdx) {
+    // After the first lesson, require a Google sign-in to continue.
+    if (!auth.user && auth.configured && progress.getLessonsCompleted() >= 1) {
+      setScreen('gate')
+      return
+    }
     const idx = typeof lessonIdx === 'number' ? lessonIdx : progress.getLessonsCompleted()
     const built = progress.buildNextLesson(idx)
     if (!built.length) { setScreen('dashboard'); return }
@@ -196,6 +201,24 @@ export default function App() {
 
   if (screen === 'log') {
     return <Progress onBack={() => setScreen('dashboard')} progress={progress} />
+  }
+
+  if (screen === 'gate') {
+    return (
+      <div className="page">
+        <div className="complete-screen">
+          <div style={{ fontSize: 60 }}>🔒</div>
+          <h2>{t('gateTitle')}</h2>
+          <p className="text-muted" style={{ maxWidth: 340 }}>{t('gateSub')}</p>
+          {auth.user ? (
+            <button className="btn btn-primary btn-lg" onClick={() => startLesson()}>{t('continueBtn')}</button>
+          ) : (
+            <button className="btn btn-primary btn-lg" onClick={auth.signIn}>{t('signInGoogle')}</button>
+          )}
+          <button className="btn btn-ghost" onClick={() => setScreen('dashboard')}>{t('backToActivities')}</button>
+        </div>
+      </div>
+    )
   }
 
   if (screen === 'lessonSummary') {

@@ -207,23 +207,26 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
         </div>
       </div>
 
-      {checked && (
-        <div style={{
-          marginTop: 16, padding: 16, borderRadius: 12,
-          background: '#EAFAF1', color: 'var(--success)',
-          fontWeight: 700, textAlign: 'center',
-        }}>
-          <div style={{ fontSize: 30 }}>{Math.round(score * 100)}%</div>
-          <div style={{ fontSize: 15, fontWeight: 600 }}>{t('drawAvgLabel')}</div>
-        </div>
-      )}
+      {/* Reserved space so the button stays put whether or not the score shows. */}
+      <div style={{ minHeight: 84, marginTop: 16, display: 'flex', alignItems: 'center' }}>
+        {checked && (
+          <div style={{
+            width: '100%', padding: 16, borderRadius: 12,
+            background: '#EAFAF1', color: 'var(--success)',
+            fontWeight: 700, textAlign: 'center',
+          }}>
+            <div style={{ fontSize: 30 }}>{Math.round(score * 100)}%</div>
+            <div style={{ fontSize: 15, fontWeight: 600 }}>{t('drawAvgLabel')}</div>
+          </div>
+        )}
+      </div>
 
       {checked ? (
-        <button className="btn btn-primary btn-lg w-full mt-16" onClick={() => onDone(score, 1)}>
+        <button className="btn btn-primary btn-lg w-full" onClick={() => onDone(score, 1)}>
           {t('nextQuestion')}
         </button>
       ) : (
-        <div className="flex gap-12 mt-16">
+        <div className="flex gap-12">
           <button className="btn btn-ghost" onClick={clearCanvas}>{t('clear')}</button>
           <button className="btn btn-primary" style={{ flex: 1 }} onClick={check}>
             {t('check')}

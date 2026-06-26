@@ -17,7 +17,7 @@ function GoogleG() {
   )
 }
 
-export default function ProfileMenu({ user, configured, signIn, signOut, onViewLog, onReset }) {
+export default function ProfileMenu({ user, configured, signIn, signOut, onViewLog }) {
   const { t, lang, setLang } = useLang()
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
@@ -122,7 +122,6 @@ export default function ProfileMenu({ user, configured, signIn, signOut, onViewL
           <div style={{ height: 1, background: 'var(--border)', margin: '8px 6px' }} />
 
           <button style={rowStyle} onClick={() => { close(); onViewLog() }}>{t('progress')}</button>
-          <button style={{ ...rowStyle, color: 'var(--error)' }} onClick={() => { close(); onReset() }}>{t('reset')}</button>
 
           <div style={{ height: 1, background: 'var(--border)', margin: '8px 6px' }} />
           <button style={rowStyle} onClick={() => { signOut(); close() }}>{t('signOut')}</button>
