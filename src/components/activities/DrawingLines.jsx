@@ -22,7 +22,9 @@ const GUIDES = {
 }
 
 // ---- Objective trace scoring (pure geometry, no AI) ----
-const TOLERANCE = 28 // px; how far a stroke may stray and still count as "on the line"
+const TOLERANCE = 16   // px; how far a stroke may stray and still count as "on the line"
+const COVER_TOL = 11   // px; a guide point counts as covered only if a stroke is this close
+                       // (tighter than TOLERANCE so a missed segment actually lowers the score)
 
 function distToSegment(p, a, b) {
   const dx = b.x - a.x, dy = b.y - a.y
@@ -69,16 +71,16 @@ function scoreTrace(points, paths) {
   let onTrack = 0
   for (const p of points) if (distToPaths(p, paths) <= TOLERANCE) onTrack++
   const accuracy = onTrack / points.length
-  // coverage: share of the guide line that has a stroke near it
-  const samples = samplePaths(paths)
+  // coverage: share of the guide line that has a stroke close to it
+  const samples = samplePaths(paths, 6)
   let covered = 0
   for (const s of samples) {
     for (const p of points) {
-      if (Math.hypot(p.x - s.x, p.y - s.y) <= TOLERANCE) { covered++; break }
+      if (Math.hypot(p.x - s.x, p.y - s.y) <= COVER_TOL) { covered++; break }
     }
   }
   const coverage = covered / samples.length
-  return 0.6 * coverage + 0.4 * accuracy
+  return 0.7 * coverage + 0.3 * accuracy
 }
 
 function drawGuide(ctx, paths, w, h) {

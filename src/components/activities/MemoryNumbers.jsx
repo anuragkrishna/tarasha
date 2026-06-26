@@ -46,7 +46,6 @@ export default function MemoryNumbers({ activityId, level, exposure = 0, onDone,
     setIsCorrect(correct)
     if (correct) setScore(s => s + 1)
     setSubmitted(true)
-    setPhase('result')
   }
 
   function next() {
@@ -101,29 +100,38 @@ export default function MemoryNumbers({ activityId, level, exposure = 0, onDone,
             onChange={e => setTyped(e.target.value.replace(/\D/g, ''))}
             placeholder={t('typeNumber')}
             autoFocus
+            disabled={submitted}
           />
-          <button className="btn btn-primary w-full" onClick={submit} disabled={!typed}>
-            {t('submit')}
-          </button>
-          <button className="btn btn-ghost w-full" style={{ marginTop: 10 }} onClick={() => setPhase('show')}>
-            {t('showAgain')}
-          </button>
-        </div>
-      )}
 
-      {phase === 'result' && (
-        <div className="card text-center" style={{ marginTop: 40 }}>
-          <div style={{ fontSize: 56, marginBottom: 12 }}>{isCorrect ? '✓' : '✗'}</div>
-          <h3 style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', marginBottom: 12 }}>
-            {isCorrect ? t('correct') : t('notQuite')}
-          </h3>
-          {!isCorrect && (
-            <p style={{ marginBottom: 8 }}>{t('numberWas')} <strong style={{ fontSize: 28, letterSpacing: 4 }}>{number}</strong></p>
+          {submitted && (
+            <div style={{
+              padding: 14, borderRadius: 12, marginBottom: 16, textAlign: 'center',
+              background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+              color: isCorrect ? 'var(--success)' : 'var(--error)', fontWeight: 600, fontSize: 19,
+            }}>
+              {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('notQuite')}`}
+              {!isCorrect && (
+                <div style={{ marginTop: 4, fontSize: 16 }}>
+                  {t('numberWas')} <strong style={{ letterSpacing: 3 }}>{number}</strong>
+                </div>
+              )}
+            </div>
           )}
-          <p style={{ color: 'var(--text-muted)', marginBottom: 24 }}>{t('youTyped')} <strong>{typed}</strong></p>
-          <button className="btn btn-primary" onClick={next}>
-            {nIndex + 1 < numbers.length ? t('nextArrow') : t('finish')}
-          </button>
+
+          {!submitted ? (
+            <>
+              <button className="btn btn-primary w-full" onClick={submit} disabled={!typed}>
+                {t('check')}
+              </button>
+              <button className="btn btn-ghost w-full" style={{ marginTop: 10 }} onClick={() => setPhase('show')}>
+                {t('showAgain')}
+              </button>
+            </>
+          ) : (
+            <button className="btn btn-primary w-full" onClick={next}>
+              {nIndex + 1 < numbers.length ? t('nextQuestion') : t('finish')}
+            </button>
+          )}
         </div>
       )}
     </div>
