@@ -15,18 +15,8 @@ export default function PictureStory({ activityId, level, exposure = 0, onDone, 
   const [done, setDone] = useState(false)
 
   if (done) {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>🖼️</div>
-          <h2>{t('wonderful')}</h2>
-          <div className="score-circle">{score}<span>/{stories.length}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(score, stories.length)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(score, stories.length))
+    return null
   }
 
   const story = stories[stIndex]

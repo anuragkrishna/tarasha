@@ -178,32 +178,8 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
 
   if (done) {
     const scores = roundScores.current
-    const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0
-    const avgPct = Math.round(avg * 100)
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>✏️</div>
-          <h2>{t('greatFocus')}</h2>
-          <div className="score-circle">{avgPct}<span>%</span></div>
-          <p className="text-muted" style={{ marginTop: 4 }}>{t('drawAvgLabel')}</p>
-          <div className="flex gap-8 wrap" style={{ justifyContent: 'center', marginTop: 12 }}>
-            {scores.map((s, i) => (
-              <span key={i} style={{
-                padding: '6px 12px', borderRadius: 16, fontSize: 14, fontWeight: 600,
-                background: 'var(--bg)', color: 'var(--text-muted)', border: '1px solid var(--border)'
-              }}>{t('drawRoundScore', { i: i + 1, p: Math.round(s * 100) })}</span>
-            ))}
-          </div>
-          <button
-            className="btn btn-primary btn-lg mt-16"
-            onClick={() => onDone(scores.reduce((a, b) => a + b, 0), TOTAL_ROUNDS)}
-          >
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(scores.reduce((a, b) => a + b, 0), TOTAL_ROUNDS))
+    return null
   }
 
   return (

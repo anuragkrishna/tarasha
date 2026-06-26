@@ -25,18 +25,7 @@ export default function ReverseCounting({ activityId, level, exposure = 0, onDon
   const seq = sequences[sIndex]
   if (!seq || done) {
     if (done) {
-      return (
-        <div className="page">
-          <div className="complete-screen">
-            <div style={{ fontSize: 60 }}>🔢</div>
-            <h2>{t('wellDone')}</h2>
-            <div className="score-circle">{score}<span>/{attempts}</span></div>
-            <button className="btn btn-primary btn-lg" onClick={() => onDone(score, attempts)}>
-              {t('backToActivities')}
-            </button>
-          </div>
-        </div>
-      )
+      queueMicrotask(() => onDone(score, attempts))
     }
     return null
   }

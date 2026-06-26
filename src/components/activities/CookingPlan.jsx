@@ -27,18 +27,8 @@ export default function CookingPlan({ activityId, level, exposure = 0, onDone, o
   const shuffled = useMemo(() => recipe ? shuffle(recipe.steps) : [], [rIndex, recipe])
 
   if (done) {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>🍳</div>
-          <h2>{t('wellDone')}</h2>
-          <div className="score-circle">{score}<span>/{recipes.length}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(score, recipes.length)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(score, recipes.length))
+    return null
   }
 
   if (!recipe) return null

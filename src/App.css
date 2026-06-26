@@ -46,6 +46,16 @@ body {
   background: var(--bg);
 }
 
+/* Lesson progress bar — fixed across the very top during a lesson. */
+.lesson-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 6px;
+  background: var(--border); z-index: 50;
+}
+.lesson-progress > div {
+  height: 100%; background: var(--primary);
+  transition: width 0.3s ease; border-radius: 0 3px 3px 0;
+}
+
 /* Cards */
 .card {
   background: var(--surface);

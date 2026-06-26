@@ -35,18 +35,8 @@ export default function MemoryNumbers({ activityId, level, exposure = 0, onDone,
   }, [phase, nIndex, showDuration])
 
   if (done) {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>🧠</div>
-          <h2>{t('wellDone')}</h2>
-          <div className="score-circle">{score}<span>/{numbers.length}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(score, numbers.length)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(score, numbers.length))
+    return null
   }
 
   const number = numbers[nIndex]

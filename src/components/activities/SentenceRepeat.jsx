@@ -34,18 +34,8 @@ export default function SentenceRepeat({ activityId, level, exposure = 0, onDone
   }, [phase, sIndex, showDuration])
 
   if (done) {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>💬</div>
-          <h2>{t('wellDone')}</h2>
-          <div className="score-circle">{score}<span>/{sentences.length}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(score, sentences.length)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(score, sentences.length))
+    return null
   }
 
   const sentence = sentences[sIndex]

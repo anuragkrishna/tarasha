@@ -53,7 +53,7 @@ function shuffle(arr) {
 // Each is a balanced mix (all 4 pillars represented, max 2 per pillar) run at a
 // fixed level. Levels ramp 1 → 2 → 3 across the ten lessons.
 export const PREBUILT = [
-  { level: 1, ids: ['odd-one-out', 'categorisation', 'memory-numbers', 'drawing-lines', 'describe-picture'] },
+  { level: 1, ids: ['odd-one-out', 'categorisation', 'memory-numbers', 'clap-when', 'drawing-lines', 'describe-picture'] },
   { level: 1, ids: ['reverse-counting', 'copy-text', 'items-recall', 'clap-when', 'story-narration'] },
   { level: 1, ids: ['weights-concept', 'money-transaction', 'sentence-repeat', 'drawing-lines', 'describe-picture'] },
   { level: 2, ids: ['cause-effect', 'cooking-plan', 'daily-events-recall', 'breath-count', 'story-narration'] },

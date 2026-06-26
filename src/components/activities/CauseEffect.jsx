@@ -47,18 +47,8 @@ export default function CauseEffect({ activityId, level, exposure = 0, onDone, o
   }
 
   if (done) {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>↔️</div>
-          <h2>{t('wellDone')}</h2>
-          <div className="score-circle">{score}<span>/{pairs.length}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(score, pairs.length)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(score, pairs.length))
+    return null
   }
 
   const matchedEffects = Object.values(matched)

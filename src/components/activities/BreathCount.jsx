@@ -42,19 +42,8 @@ export default function BreathCount({ activityId, level, onDone, onBack }) {
   }, [phase]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (phase === 'done') {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>🌬️</div>
-          <h2>{t('calmFocused')}</h2>
-          <div className="score-circle">{target}<span> {t('breaths')}</span></div>
-          <p className="text-muted">{t('breathsTaken', { n: target })}</p>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(target, target)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(target, target))
+    return null
   }
 
   const isActive = phase !== 'ready'

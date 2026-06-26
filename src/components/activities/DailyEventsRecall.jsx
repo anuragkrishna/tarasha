@@ -29,18 +29,8 @@ export default function DailyEventsRecall({ activityId, level, onDone, onBack })
   const [caregiverRating, setCaregiverRating] = useState(null)
 
   if (done) {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>🌅</div>
-          <h2>{t('greatRecall')}</h2>
-          <div className="score-circle">{score}<span>/{slots.length}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(score, slots.length)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(score, slots.length))
+    return null
   }
 
   const slot = slots[sIndex]

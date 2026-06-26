@@ -42,18 +42,8 @@ export default function ItemsRecall({ activityId, level, exposure = 0, onDone, o
   }, [phase, itemIndex, lIndex, showDuration, lists])
 
   if (done) {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>🧠</div>
-          <h2>{t('memoryDone')}</h2>
-          <div className="score-circle">{score}<span>/{lists.length}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(score, lists.length)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(score, lists.length))
+    return null
   }
 
   const currentList = lists[lIndex]

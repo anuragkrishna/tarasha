@@ -39,18 +39,8 @@ export default function DelayedRecall({ activityId, level, exposure = 0, onDone,
   }, [phase, rIndex, showDuration])
 
   if (done) {
-    return (
-      <div className="page">
-        <div className="complete-screen">
-          <div style={{ fontSize: 60 }}>⏳</div>
-          <h2>{t('greatMemory')}</h2>
-          <div className="score-circle">{score}<span>/{rounds.length}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(score, rounds.length)}>
-            {t('backToActivities')}
-          </button>
-        </div>
-      </div>
-    )
+    queueMicrotask(() => onDone(score, rounds.length))
+    return null
   }
 
   if (!round) return null
