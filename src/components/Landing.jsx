@@ -30,57 +30,49 @@ export default function Landing({ configured, signIn, onGuest }) {
 
   return (
     <div className="landing-page">
-      <div className="lp-wrap">
-        <div className="lp-frame">
-          {/* Top bar — fake browser chrome + language toggle */}
-          <div className="lp-bar">
-            <span className="lp-dot" /><span className="lp-dot" /><span className="lp-dot" />
-            <span className="lp-bar-url">tarasha.life</span>
-            <span className="lp-langs">
-              {[['en', 'English'], ['hi', 'हिंदी']].map(([code, label]) => (
-                <button
-                  key={code}
-                  className={`lp-lang ${lang === code ? 'is-active' : ''}`}
-                  onClick={() => setLang(code)}
-                >
-                  {label}
-                </button>
-              ))}
-            </span>
+      {/* Language toggle — top right */}
+      <div className="lp-langs">
+        {[['en', 'English'], ['hi', 'हिंदी']].map(([code, label]) => (
+          <button
+            key={code}
+            className={`lp-lang ${lang === code ? 'is-active' : ''}`}
+            onClick={() => setLang(code)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="lp-stage">
+        {/* Left — brain art + pillars */}
+        <div className="lp-left">
+          <div className="lp-art">
+            <img className="lp-brain" src="/brain-hero.png" alt="" />
           </div>
+          <div className="lp-pillars">
+            {pillars.map((p, i) => (
+              <span key={p} style={{ display: 'contents' }}>
+                <span className="lp-pillar">{p}</span>
+                {i < pillars.length - 1 && <span className="lp-sep" />}
+              </span>
+            ))}
+          </div>
+        </div>
 
-          <div className="lp-stage">
-            {/* Left — brain art + pillars */}
-            <div className="lp-left">
-              <div className="lp-art">
-                <img className="lp-brain" src="/brain-hero.png" alt="" />
-              </div>
-              <div className="lp-pillars">
-                {pillars.map((p, i) => (
-                  <span key={p} style={{ display: 'contents' }}>
-                    <span className="lp-pillar">{p}</span>
-                    {i < pillars.length - 1 && <span className="lp-sep" />}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Right — copy + CTAs */}
-            <div className="lp-body">
-              <div className="lp-eyebrow">{t('landingEyebrow')}</div>
-              <h1 className="lp-h">{t('landingHeadline')}</h1>
-              <p className="lp-sub">{t('landingSub')}</p>
-              <div className="lp-cta">
-                <button className="lp-btn-primary" onClick={() => { track('continue_as_guest'); onGuest() }}>
-                  {t('landingGuest')}
-                </button>
-                {configured && (
-                  <button className="lp-btn-ghost" onClick={signIn}>
-                    <GoogleG /> {t('landingSignIn')}
-                  </button>
-                )}
-              </div>
-            </div>
+        {/* Right — copy + CTAs */}
+        <div className="lp-body">
+          <div className="lp-eyebrow">{t('landingEyebrow')}</div>
+          <h1 className="lp-h">{t('landingHeadline')}</h1>
+          <p className="lp-sub">{t('landingSub')}</p>
+          <div className="lp-cta">
+            <button className="lp-btn-primary" onClick={() => { track('continue_as_guest'); onGuest() }}>
+              {t('landingGuest')}
+            </button>
+            {configured && (
+              <button className="lp-btn-ghost" onClick={signIn}>
+                <GoogleG /> {t('landingSignIn')}
+              </button>
+            )}
           </div>
         </div>
       </div>
