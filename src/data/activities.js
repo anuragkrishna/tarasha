@@ -1078,6 +1078,77 @@ export const ACTIVITIES = [
       { level: 3, breaths: 8, inhale: 4, hold: 4, exhale: 6 },
     ]
   },
+  {
+    id: 'clap-when',
+    category: 'Topic Maintenance',
+    title: 'Clap on the Word',
+    title_hi: 'शब्द पर ताली',
+    icon: '👏',
+    description: 'Listen carefully and clap only when you hear the chosen word',
+    description_hi: 'ध्यान से सुनें और सिर्फ़ चुने हुए शब्द पर ताली बजाएँ',
+    levels: [
+      {
+        level: 1,
+        rounds: [
+          {
+            target: 'Apple', target_hi: 'सेब',
+            words: ['Mango', 'Apple', 'Chair', 'Banana', 'Apple', 'Table'],
+            words_hi: ['आम', 'सेब', 'कुर्सी', 'केला', 'सेब', 'मेज़'],
+          },
+          {
+            target: 'Dog', target_hi: 'कुत्ता',
+            words: ['Cat', 'Dog', 'Sun', 'Book', 'Dog', 'Cup'],
+            words_hi: ['बिल्ली', 'कुत्ता', 'सूरज', 'किताब', 'कुत्ता', 'कप'],
+          },
+          {
+            target: 'Sun', target_hi: 'सूरज',
+            words: ['Moon', 'Sun', 'Tree', 'Car', 'Sun', 'Fish'],
+            words_hi: ['चाँद', 'सूरज', 'पेड़', 'गाड़ी', 'सूरज', 'मछली'],
+          },
+        ]
+      },
+      {
+        level: 2,
+        rounds: [
+          {
+            target: 'Ball', target_hi: 'गेंद',
+            words: ['Cup', 'Ball', 'Book', 'Ball', 'Tree', 'Cup', 'Ball', 'Car'],
+            words_hi: ['कप', 'गेंद', 'किताब', 'गेंद', 'पेड़', 'कप', 'गेंद', 'गाड़ी'],
+          },
+          {
+            target: 'Cat', target_hi: 'बिल्ली',
+            words: ['Dog', 'Cat', 'Fish', 'Cat', 'Sun', 'Dog', 'Cat', 'Moon'],
+            words_hi: ['कुत्ता', 'बिल्ली', 'मछली', 'बिल्ली', 'सूरज', 'कुत्ता', 'बिल्ली', 'चाँद'],
+          },
+          {
+            target: 'Book', target_hi: 'किताब',
+            words: ['Pen', 'Book', 'Cup', 'Table', 'Book', 'Chair', 'Book', 'Ball'],
+            words_hi: ['कलम', 'किताब', 'कप', 'मेज़', 'किताब', 'कुर्सी', 'किताब', 'गेंद'],
+          },
+        ]
+      },
+      {
+        level: 3,
+        rounds: [
+          {
+            target: 'Tree', target_hi: 'पेड़',
+            words: ['Car', 'Tree', 'Fish', 'Moon', 'Tree', 'Cup', 'Sun', 'Tree', 'Book', 'Ball'],
+            words_hi: ['गाड़ी', 'पेड़', 'मछली', 'चाँद', 'पेड़', 'कप', 'सूरज', 'पेड़', 'किताब', 'गेंद'],
+          },
+          {
+            target: 'Fish', target_hi: 'मछली',
+            words: ['Tree', 'Fish', 'Cat', 'Cup', 'Fish', 'Dog', 'Moon', 'Fish', 'Car', 'Sun'],
+            words_hi: ['पेड़', 'मछली', 'बिल्ली', 'कप', 'मछली', 'कुत्ता', 'चाँद', 'मछली', 'गाड़ी', 'सूरज'],
+          },
+          {
+            target: 'Moon', target_hi: 'चाँद',
+            words: ['Sun', 'Moon', 'Ball', 'Tree', 'Moon', 'Fish', 'Cup', 'Moon', 'Dog', 'Book'],
+            words_hi: ['सूरज', 'चाँद', 'गेंद', 'पेड़', 'चाँद', 'मछली', 'कप', 'चाँद', 'कुत्ता', 'किताब'],
+          },
+        ]
+      },
+    ]
+  },
 ]
 
 // Deep-localize content: for any field `x` that has a sibling `x_hi`, use the
@@ -1145,6 +1216,7 @@ const CONTENT_KEY = {
   'cooking-plan': 'recipes',
   'delayed-recall': 'rounds',
   'describe-picture': 'scenes',
+  'clap-when': 'rounds',
 }
 
 // Walk the full easy→hard question bank (all levels) and return a window of `n`

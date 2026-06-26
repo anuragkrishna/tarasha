@@ -20,6 +20,7 @@ const DURATION_OVERRIDE = {
   'picture-story': 3,
   'daily-events-recall': 3,
   'cooking-plan': 2.5,
+  'clap-when': 3,
 }
 
 export function durationOf(id) {
@@ -53,7 +54,7 @@ function shuffle(arr) {
 // fixed level. Levels ramp 1 → 2 → 3 across the ten lessons.
 export const PREBUILT = [
   { level: 1, ids: ['odd-one-out', 'categorisation', 'memory-numbers', 'drawing-lines', 'describe-picture'] },
-  { level: 1, ids: ['reverse-counting', 'copy-text', 'items-recall', 'breath-count', 'story-narration'] },
+  { level: 1, ids: ['reverse-counting', 'copy-text', 'items-recall', 'clap-when', 'story-narration'] },
   { level: 1, ids: ['weights-concept', 'money-transaction', 'sentence-repeat', 'drawing-lines', 'describe-picture'] },
   { level: 2, ids: ['cause-effect', 'cooking-plan', 'daily-events-recall', 'breath-count', 'story-narration'] },
   { level: 2, ids: ['odd-one-out', 'weights-concept', 'picture-story', 'drawing-lines', 'describe-picture'] },

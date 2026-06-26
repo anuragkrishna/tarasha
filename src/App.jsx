@@ -20,6 +20,7 @@ import Categorisation from './components/activities/Categorisation'
 import DelayedRecall from './components/activities/DelayedRecall'
 import DescribePicture from './components/activities/DescribePicture'
 import BreathCount from './components/activities/BreathCount'
+import ClapWhen from './components/activities/ClapWhen'
 import MixedQuiz from './components/activities/MixedQuiz'
 import LessonSummary from './components/LessonSummary'
 import { useProgress } from './hooks/useProgress'
@@ -47,6 +48,7 @@ const ACTIVITY_COMPONENTS = {
   'delayed-recall': DelayedRecall,
   'describe-picture': DescribePicture,
   'breath-count': BreathCount,
+  'clap-when': ClapWhen,
 }
 
 // Single-select quiz activities that share a "pick one option" shape — these get
