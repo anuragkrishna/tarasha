@@ -68,12 +68,20 @@ export default function LessonSummary({ results, lessonNumber, onNext, onDone })
         })}
       </div>
 
-      <button className="btn btn-primary btn-lg w-full" onClick={onNext} style={{ marginTop: 16 }}>
-        {t('nextLesson')}
-      </button>
-      <button className="btn btn-ghost w-full" onClick={onDone} style={{ marginTop: 10 }}>
-        {t('done')}
-      </button>
+      {/* Sticky action bar so Next/Done stay in view without scrolling. */}
+      <div style={{
+        position: 'sticky', bottom: 0, zIndex: 5,
+        background: 'var(--bg)', paddingTop: 12, paddingBottom: 16, marginTop: 16,
+        display: 'flex', flexDirection: 'column', gap: 10,
+        boxShadow: '0 -8px 16px -8px rgba(0,0,0,0.12)',
+      }}>
+        <button className="btn btn-primary btn-lg w-full" onClick={onNext}>
+          {t('nextLesson')}
+        </button>
+        <button className="btn btn-ghost w-full" onClick={onDone}>
+          {t('done')}
+        </button>
+      </div>
     </div>
   )
 }

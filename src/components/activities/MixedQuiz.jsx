@@ -92,8 +92,9 @@ export default function MixedQuiz({ sources, onDone, onBack }) {
   // per-source totals we need to report each activity's score back.
   const [{ questions, totals }] = useState(() => {
     // Each source yields up to MAX_Q_PER_TYPE questions (walked along its
-    // difficulty ladder by exposure), then we interleave the types together.
-    const lists = sources.map(s => normalizeSource(s, lang, t))
+    // difficulty ladder by exposure). Shuffle the type order, then round-robin
+    // them so no two questions of the same type land next to each other.
+    const lists = shuffle(sources.map(s => normalizeSource(s, lang, t)))
     const deck = interleave(lists)
     const totals = {}
     for (const q of deck) totals[q.src] = (totals[q.src] || 0) + 1
@@ -102,7 +103,7 @@ export default function MixedQuiz({ sources, onDone, onBack }) {
 
   const [qIndex, setQIndex] = useState(0)
   const [selected, setSelected] = useState(null)
-  const [answered, setAnswered] = useState(false)
+  const [checked, setChecked] = useState(false)
   const [tally, setTally] = useState({}) // srcId -> correct count
   const [done, setDone] = useState(false)
 
@@ -134,17 +135,22 @@ export default function MixedQuiz({ sources, onDone, onBack }) {
 
   if (!question) return null
 
+  // First tap just picks an option; the Check button grades it.
   function handleSelect(opt) {
-    if (answered) return
+    if (checked) return
     setSelected(opt.label)
-    if (opt.label === question.answer) {
+  }
+
+  function check() {
+    if (selected == null || checked) return
+    if (selected === question.answer) {
       setTally(s => ({ ...s, [question.src]: (s[question.src] || 0) + 1 }))
     }
-    setAnswered(true)
+    setChecked(true)
   }
 
   function next() {
-    setAnswered(false)
+    setChecked(false)
     setSelected(null)
     if (qIndex + 1 >= questions.length) setDone(true)
     else setQIndex(i => i + 1)
@@ -188,22 +194,17 @@ export default function MixedQuiz({ sources, onDone, onBack }) {
       {question.layout === 'grid' ? (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {question.options.map((opt, i) => {
-            const isSelected = selected === opt.label
-            const isAnswer = opt.label === question.answer
-            const cardCorrect = answered && isAnswer
-            const cardWrong = answered && isSelected && !isAnswer
+            const s = optionStyle(opt, selected, checked, question.answer)
             return (
               <button
                 key={i}
                 onClick={() => handleSelect(opt)}
                 style={{
-                  background: cardCorrect ? '#EAFAF1' : cardWrong ? '#FDEDEC' : 'white',
-                  border: `3px solid ${cardCorrect ? 'var(--success)' : cardWrong ? 'var(--error)' : 'var(--border)'}`,
-                  borderRadius: 20,
-                  padding: '24px 16px',
-                  cursor: answered ? 'default' : 'pointer',
+                  background: s.bg, border: `3px solid ${s.border}`,
+                  borderRadius: 20, padding: '24px 16px',
+                  cursor: checked ? 'default' : 'pointer',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
-                  boxShadow: answered ? 'none' : 'var(--shadow)',
+                  boxShadow: checked ? 'none' : 'var(--shadow)',
                   transition: 'border-color 0.15s, background 0.15s',
                 }}
               >
@@ -216,22 +217,17 @@ export default function MixedQuiz({ sources, onDone, onBack }) {
       ) : (
         <div className="flex flex-col gap-12">
           {question.options.map((opt, i) => {
-            const isSelected = selected === opt.label
-            const isAnswer = opt.label === question.answer
-            const cardCorrect = answered && isAnswer
-            const cardWrong = answered && isSelected && !isAnswer
+            const s = optionStyle(opt, selected, checked, question.answer)
             return (
               <button
                 key={i}
                 onClick={() => handleSelect(opt)}
                 style={{
-                  background: cardCorrect ? '#EAFAF1' : cardWrong ? '#FDEDEC' : 'white',
-                  border: `3px solid ${cardCorrect ? 'var(--success)' : cardWrong ? 'var(--error)' : 'var(--border)'}`,
-                  borderRadius: 16,
-                  padding: '20px 18px',
-                  cursor: answered ? 'default' : 'pointer',
+                  background: s.bg, border: `3px solid ${s.border}`,
+                  borderRadius: 16, padding: '20px 18px',
+                  cursor: checked ? 'default' : 'pointer',
                   fontSize: 22, fontWeight: 600, fontFamily: 'inherit', textAlign: 'center',
-                  boxShadow: answered ? 'none' : 'var(--shadow)',
+                  boxShadow: checked ? 'none' : 'var(--shadow)',
                   transition: 'border-color 0.15s, background 0.15s',
                 }}
               >
@@ -242,24 +238,47 @@ export default function MixedQuiz({ sources, onDone, onBack }) {
         </div>
       )}
 
-      {answered && (
-        <>
-          <div style={{
-            marginTop: 16, padding: 14, borderRadius: 12,
-            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
-            color: isCorrect ? 'var(--success)' : 'var(--error)',
-            fontWeight: 600, fontSize: 19, textAlign: 'center',
-          }}>
-            {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('answerWas', { a: question.answer })}`}
-            {!isCorrect && question.hint && (
-              <div style={{ fontSize: 16, opacity: 0.9, marginTop: 4 }}>{question.hint}</div>
-            )}
-          </div>
-          <button className="btn btn-primary btn-lg w-full" style={{ marginTop: 16 }} onClick={next}>
-            {isLast ? t('finish') : t('nextQuestion')}
-          </button>
-        </>
+      {/* Feedback appears on the same screen, right above the button. */}
+      {checked && (
+        <div style={{
+          marginTop: 16, padding: 14, borderRadius: 12,
+          background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+          color: isCorrect ? 'var(--success)' : 'var(--error)',
+          fontWeight: 600, fontSize: 19, textAlign: 'center',
+        }}>
+          {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('answerWas', { a: question.answer })}`}
+          {!isCorrect && question.hint && (
+            <div style={{ fontSize: 16, opacity: 0.9, marginTop: 4 }}>{question.hint}</div>
+          )}
+        </div>
+      )}
+
+      {/* One button: "Check" until graded, then "Next question". */}
+      {checked ? (
+        <button className="btn btn-primary btn-lg w-full" style={{ marginTop: 16 }} onClick={next}>
+          {isLast ? t('finish') : t('nextQuestion')}
+        </button>
+      ) : (
+        <button
+          className="btn btn-primary btn-lg w-full"
+          style={{ marginTop: 16, opacity: selected == null ? 0.5 : 1 }}
+          disabled={selected == null}
+          onClick={check}
+        >
+          {t('check')}
+        </button>
       )}
     </div>
   )
+}
+
+// Option card colours: selected (pre-check) highlights blue; after Check the
+// correct answer turns green and a wrong pick turns red.
+function optionStyle(opt, selected, checked, answer) {
+  const isSelected = selected === opt.label
+  const isAnswer = opt.label === answer
+  if (checked && isAnswer) return { bg: '#EAFAF1', border: 'var(--success)' }
+  if (checked && isSelected && !isAnswer) return { bg: '#FDEDEC', border: 'var(--error)' }
+  if (!checked && isSelected) return { bg: '#EAF1FB', border: 'var(--primary)' }
+  return { bg: 'white', border: 'var(--border)' }
 }
