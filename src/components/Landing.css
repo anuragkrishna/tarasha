@@ -1,0 +1,97 @@
+/* Landing page — scoped under .landing-page so nothing leaks into the app. */
+.landing-page {
+  --lp-navy: #16263f;
+  --lp-teal: #5a93ad;
+  --lp-teal-deep: #3f7892;
+  --lp-ink: #2a3744;
+  --lp-slate: #46566b;
+  --lp-mute: #7b8794;
+  --lp-line: #d7dde2;
+  --lp-panel: #e2e7ea;
+  --lp-page-cool: #eef1f3;
+  --lp-display: 'Figtree', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+  --lp-body: 'Inter', 'Noto Sans', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+
+  min-height: 100vh;
+  background: #f6f7f8;
+  color: var(--lp-ink);
+  font-family: var(--lp-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.landing-page .lp-wrap { max-width: 1040px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.landing-page .lp-frame {
+  border: 1px solid var(--lp-line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20,38,63,.04), 0 12px 32px rgba(20,38,63,.07);
+  opacity: 0; transform: translateY(10px);
+  animation: lp-rise .6s ease forwards;
+}
+@keyframes lp-rise { to { opacity: 1; transform: none; } }
+
+.landing-page .lp-bar {
+  display: flex; align-items: center; gap: 7px;
+  padding: 11px 16px; background: #fbfcfc; border-bottom: 1px solid var(--lp-line);
+}
+.landing-page .lp-dot { width: 10px; height: 10px; border-radius: 50%; background: #d7dde2; }
+.landing-page .lp-bar-url { margin-left: 10px; font-size: 12px; color: var(--lp-mute); }
+.landing-page .lp-langs { margin-left: auto; display: flex; gap: 6px; }
+.landing-page .lp-lang {
+  border: 1.5px solid var(--lp-line); background: transparent; color: var(--lp-slate);
+  border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: var(--lp-display);
+}
+.landing-page .lp-lang.is-active { background: var(--lp-navy); border-color: var(--lp-navy); color: #fff; }
+
+.landing-page .lp-stage {
+  background: var(--lp-page-cool); padding: 56px 48px;
+  display: flex; align-items: center; gap: 40px;
+}
+.landing-page .lp-left { flex: 0 0 36%; display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
+.landing-page .lp-art {
+  background: var(--lp-panel); border-radius: 14px; padding: 30px;
+  display: flex; align-items: center; justify-content: center;
+}
+.landing-page .lp-brain { width: 100%; height: auto; display: block; }
+.landing-page .lp-body { flex: 1; }
+
+.landing-page .lp-eyebrow {
+  font-family: var(--lp-display); font-weight: 700; font-size: 13px;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--lp-teal-deep); margin-bottom: 14px;
+}
+.landing-page .lp-h {
+  font-family: var(--lp-display); font-weight: 800; font-size: 36px; line-height: 1.14;
+  color: var(--lp-navy); margin: 0 0 16px; letter-spacing: -0.015em;
+}
+.landing-page .lp-sub { font-size: 18px; line-height: 1.55; color: var(--lp-slate); margin: 0 0 30px; max-width: 390px; }
+
+.landing-page .lp-cta { display: flex; flex-direction: column; gap: 13px; max-width: 330px; }
+.landing-page .lp-btn-primary {
+  font-family: var(--lp-display); font-weight: 700; font-size: 18px; color: #fff;
+  background: var(--lp-navy); border: none; border-radius: 11px; padding: 18px 20px;
+  cursor: pointer; text-align: center; transition: background .2s;
+}
+.landing-page .lp-btn-primary:hover { background: #0e1c30; }
+.landing-page .lp-btn-ghost {
+  font-family: var(--lp-display); font-weight: 600; font-size: 16px; color: var(--lp-navy);
+  background: transparent; border: 2px solid #c3ccd6; border-radius: 11px; padding: 13px 20px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 9px; transition: border-color .2s;
+}
+.landing-page .lp-btn-ghost:hover { border-color: var(--lp-teal); }
+
+.landing-page .lp-pillars { display: flex; align-items: center; justify-content: center; gap: 11px; flex-wrap: wrap; }
+.landing-page .lp-pillar { font-family: var(--lp-display); font-weight: 600; font-size: 13.5px; color: var(--lp-navy); white-space: nowrap; }
+.landing-page .lp-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--lp-teal); flex: none; }
+
+@media (max-width: 760px) {
+  .landing-page .lp-stage { flex-direction: column; padding: 40px 26px; }
+  .landing-page .lp-left { flex: none; width: 80%; max-width: 300px; align-self: center; }
+  .landing-page .lp-h { font-size: 30px; }
+  .landing-page .lp-cta { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .lp-frame { animation: none; opacity: 1; transform: none; }
+}
+.landing-page button:focus-visible { outline: 3px solid var(--lp-teal); outline-offset: 3px; }
