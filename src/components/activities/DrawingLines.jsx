@@ -21,6 +21,66 @@ const GUIDES = {
   }
 }
 
+// ---- Objective trace scoring (pure geometry, no AI) ----
+const TOLERANCE = 28 // px; how far a stroke may stray and still count as "on the line"
+
+function distToSegment(p, a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y
+  const len2 = dx * dx + dy * dy
+  if (len2 === 0) return Math.hypot(p.x - a.x, p.y - a.y)
+  let t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2
+  t = Math.max(0, Math.min(1, t))
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy))
+}
+
+function distToPaths(p, paths) {
+  let min = Infinity
+  for (const path of paths) {
+    for (let i = 0; i < path.length - 1; i++) {
+      const d = distToSegment(p, path[i], path[i + 1])
+      if (d < min) min = d
+    }
+  }
+  return min
+}
+
+// Evenly sample the guide lines so we can measure how much of them got traced
+function samplePaths(paths, spacing = 8) {
+  const samples = []
+  for (const path of paths) {
+    for (let i = 0; i < path.length - 1; i++) {
+      const a = path[i], b = path[i + 1]
+      const len = Math.hypot(b.x - a.x, b.y - a.y)
+      const n = Math.max(1, Math.round(len / spacing))
+      for (let s = 0; s <= n; s++) {
+        const t = s / n
+        samples.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t })
+      }
+    }
+  }
+  return samples
+}
+
+// Returns 0..1. Combines coverage (did they trace the whole line?)
+// and accuracy (did they stay on it?).
+function scoreTrace(points, paths) {
+  if (!points || points.length < 2 || !paths.length) return 0
+  // accuracy: share of drawn points that landed near a guide line
+  let onTrack = 0
+  for (const p of points) if (distToPaths(p, paths) <= TOLERANCE) onTrack++
+  const accuracy = onTrack / points.length
+  // coverage: share of the guide line that has a stroke near it
+  const samples = samplePaths(paths)
+  let covered = 0
+  for (const s of samples) {
+    for (const p of points) {
+      if (Math.hypot(p.x - s.x, p.y - s.y) <= TOLERANCE) { covered++; break }
+    }
+  }
+  const coverage = covered / samples.length
+  return 0.6 * coverage + 0.4 * accuracy
+}
+
 function drawGuide(ctx, paths, w, h) {
   ctx.clearRect(0, 0, w, h)
   ctx.setLineDash([12, 10])
@@ -43,6 +103,9 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
   const guideRef = useRef(null)
   const drawing = useRef(false)
   const lastPos = useRef(null)
+  const strokePoints = useRef([]) // points drawn this round
+  const pathsRef = useRef([])     // current round's guide geometry
+  const roundScores = useRef([])  // objective 0..1 score per round
   const [round, setRound] = useState(0)
   const [done, setDone] = useState(false)
   const TOTAL_ROUNDS = 3
@@ -58,6 +121,7 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
     canvas.width = w; canvas.height = h
     guide.width = w; guide.height = h
     const paths = GUIDES[type](w, h)
+    pathsRef.current = paths
     drawGuide(guide.getContext('2d'), paths, w, h)
   }, [round, type])
 
@@ -70,7 +134,9 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
   function startDraw(e) {
     e.preventDefault()
     drawing.current = true
-    lastPos.current = getPos(e, canvasRef.current)
+    const pos = getPos(e, canvasRef.current)
+    lastPos.current = pos
+    strokePoints.current.push(pos)
   }
 
   function draw(e) {
@@ -87,6 +153,7 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
     ctx.lineCap = 'round'
     ctx.stroke()
     lastPos.current = pos
+    strokePoints.current.push(pos)
   }
 
   function stopDraw(e) {
@@ -98,22 +165,40 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+    strokePoints.current = []
   }
 
   function next() {
+    // Score this round before clearing the captured strokes
+    roundScores.current.push(scoreTrace(strokePoints.current, pathsRef.current))
     clearCanvas()
     if (round + 1 >= TOTAL_ROUNDS) setDone(true)
     else setRound(r => r + 1)
   }
 
   if (done) {
+    const scores = roundScores.current
+    const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0
+    const avgPct = Math.round(avg * 100)
     return (
       <div className="page">
         <div className="complete-screen">
           <div style={{ fontSize: 60 }}>✏️</div>
           <h2>{t('greatFocus')}</h2>
-          <div className="score-circle">{TOTAL_ROUNDS}<span>/{TOTAL_ROUNDS}</span></div>
-          <button className="btn btn-primary btn-lg" onClick={() => onDone(TOTAL_ROUNDS, TOTAL_ROUNDS)}>
+          <div className="score-circle">{avgPct}<span>%</span></div>
+          <p className="text-muted" style={{ marginTop: 4 }}>{t('drawAvgLabel')}</p>
+          <div className="flex gap-8 wrap" style={{ justifyContent: 'center', marginTop: 12 }}>
+            {scores.map((s, i) => (
+              <span key={i} style={{
+                padding: '6px 12px', borderRadius: 16, fontSize: 14, fontWeight: 600,
+                background: 'var(--bg)', color: 'var(--text-muted)', border: '1px solid var(--border)'
+              }}>{t('drawRoundScore', { i: i + 1, p: Math.round(s * 100) })}</span>
+            ))}
+          </div>
+          <button
+            className="btn btn-primary btn-lg mt-16"
+            onClick={() => onDone(scores.reduce((a, b) => a + b, 0), TOTAL_ROUNDS)}
+          >
             {t('backToActivities')}
           </button>
         </div>

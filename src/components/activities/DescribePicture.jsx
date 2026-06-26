@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { getActivityLevel, getActivity } from '../../data/activities'
+import { getActivityLevel, getLadderContent, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
 
-export default function DescribePicture({ activityId, level, onDone, onBack }) {
+export default function DescribePicture({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
   const activity = getActivity(activityId, lang)
-  const levelData = getActivityLevel(activityId, level, lang)
+  const levelData = getLadderContent(activityId, exposure, lang, 1) || getActivityLevel(activityId, level, lang)
   const scenes = levelData?.scenes || []
   const sentenceTarget = levelData?.sentenceTarget || 2
   // One picture per day (rotates daily)
@@ -44,7 +44,7 @@ export default function DescribePicture({ activityId, level, onDone, onBack }) {
       <div className="activity-header">
         <button className="back-btn" onClick={onBack}>←</button>
         <div className="activity-title">{pickField(activity, 'title', lang)}</div>
-        <span className="level-badge">{t('level')} {level}</span>
+        <span className="level-badge">{t('level')} {levelData?.level || level}</span>
       </div>
 
       {/* Big scene */}

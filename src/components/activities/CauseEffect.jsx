@@ -1,5 +1,5 @@
 import { useState, useMemo, Fragment } from 'react'
-import { getActivityLevel, getActivity } from '../../data/activities'
+import { getActivityLevel, getLadderContent, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
 
 function shuffle(arr) {
@@ -11,10 +11,10 @@ function shuffle(arr) {
   return a
 }
 
-export default function CauseEffect({ activityId, level, onDone, onBack }) {
+export default function CauseEffect({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
   const activity = getActivity(activityId, lang)
-  const levelData = getActivityLevel(activityId, level, lang)
+  const levelData = getLadderContent(activityId, exposure, lang, 2) || getActivityLevel(activityId, level, lang)
   const pairs = levelData?.pairs || []
 
   const shuffledEffects = useMemo(() => shuffle(pairs.map(p => p.effect)), [pairs])
@@ -68,7 +68,7 @@ export default function CauseEffect({ activityId, level, onDone, onBack }) {
       <div className="activity-header">
         <button className="back-btn" onClick={onBack}>←</button>
         <div className="activity-title">{pickField(activity, 'title', lang)}</div>
-        <span className="level-badge">{t('level')} {level}</span>
+        <span className="level-badge">{t('level')} {levelData?.level || level}</span>
       </div>
 
       <div className="instruction-box">

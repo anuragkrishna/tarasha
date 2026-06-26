@@ -264,9 +264,12 @@ export function useProgress(user) {
     saveLessonMeta(fresh)
   }, [])
 
+  // How many times this activity has been completed — drives the difficulty ladder.
+  const getExposure = useCallback((id) => (data[id]?.history?.length || 0), [data])
+
   return {
     getLevel, computeLevelChange, recordResult, setLevel, getFullLog, getStreak,
     getLessonNumber, getLessonsCompleted, getNextLessonInfo, buildNextLesson, completeLesson,
-    getAverage, getWeeklyByCategory, getCompletedDays, resetAll,
+    getAverage, getWeeklyByCategory, getCompletedDays, resetAll, getExposure,
   }
 }

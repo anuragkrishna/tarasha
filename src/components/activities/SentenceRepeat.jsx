@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
-import { getActivityLevel, getActivity } from '../../data/activities'
+import { getOrderedLevels, ladderWindow, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
 
-export default function SentenceRepeat({ activityId, level, onDone, onBack }) {
+export default function SentenceRepeat({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
   const activity = getActivity(activityId, lang)
-  const levelData = getActivityLevel(activityId, level, lang)
-  const allSentences = levelData?.sentences || []
+  // Sentences are tagged by language inside one array, so gather across all
+  // levels, filter to this language, then walk the ladder by exposure.
+  const levels = getOrderedLevels(activityId, lang)
+  const allSentences = levels.flatMap(l => l.sentences || [])
   const wantedSentences = allSentences.filter(s => s.lang === (lang === 'hi' ? 'hi' : 'en'))
-  const sentences = wantedSentences.length ? wantedSentences : allSentences
-  const showDuration = levelData?.showDuration || 5000
+  const sentences = ladderWindow(wantedSentences.length ? wantedSentences : allSentences, exposure, 2)
+  const showDuration = levels[0]?.showDuration || 5000
 
   const [sIndex, setSIndex] = useState(0)
   const [phase, setPhase] = useState('show')

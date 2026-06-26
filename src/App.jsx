@@ -20,6 +20,7 @@ import Categorisation from './components/activities/Categorisation'
 import DelayedRecall from './components/activities/DelayedRecall'
 import DescribePicture from './components/activities/DescribePicture'
 import BreathCount from './components/activities/BreathCount'
+import MixedQuiz from './components/activities/MixedQuiz'
 import LessonSummary from './components/LessonSummary'
 import { useProgress } from './hooks/useProgress'
 import { useAuth } from './hooks/useAuth'
@@ -46,6 +47,28 @@ const ACTIVITY_COMPONENTS = {
   'delayed-recall': DelayedRecall,
   'describe-picture': DescribePicture,
   'breath-count': BreathCount,
+}
+
+// Single-select quiz activities that share a "pick one option" shape — these get
+// interleaved question-by-question instead of running as separate blocks.
+const INTERLEAVE_IDS = new Set(['odd-one-out', 'weights-concept', 'money-transaction', 'categorisation'])
+
+// Fold the single-select quiz activities into one slot (placed where the first
+// one was) so they're capped to a few questions each and interleaved when there
+// are 2+. A lone quiz still routes through it just to get the per-type cap.
+function groupLesson(lesson) {
+  const sources = lesson.filter(it => INTERLEAVE_IDS.has(it.id))
+  if (sources.length < 1) return lesson
+  const out = []
+  let inserted = false
+  for (const it of lesson) {
+    if (INTERLEAVE_IDS.has(it.id)) {
+      if (!inserted) { out.push({ id: '__mixed__', sources }); inserted = true }
+    } else {
+      out.push(it)
+    }
+  }
+  return out
 }
 
 export default function App() {
@@ -97,7 +120,10 @@ export default function App() {
     track('lesson_start', { lesson_number: idx + 1, level: info.level || 0, prebuilt: info.prebuilt })
     setPlayedLessonIndex(idx)
     setLessonNumber(idx + 1)
-    setLesson(next)
+    // Tag each activity with its exposure (times done) so the question ladder
+    // serves progressively tougher questions on each repeat.
+    const withExposure = next.map(it => ({ ...it, exposure: progress.getExposure(it.id) }))
+    setLesson(groupLesson(withExposure))
     setLessonIndex(0)
     setLessonResults([])
     setScreen('activity')
@@ -110,22 +136,24 @@ export default function App() {
     setScreen('dashboard')
   }
 
-  // Activity finished — record the result silently and advance straight to the
-  // next activity (no intermediate recap screen). Level adjusts in the background.
-  function onActivityDone(score, total, notes = '') {
-    const item = lesson[lessonIndex]
-    const { newLevel } = progress.computeLevelChange(item.id, score, total, item.level)
-    progress.recordResult(item.id, score, total, newLevel, notes, item.level)
-    const results = [...lessonResults, { id: item.id, score, total, level: item.level, mode: getMode(item.id) }]
-    setLessonResults(results)
-    track('activity_complete', { activity_id: item.id, score, total, level: item.level })
+  // Record one activity's result (level adjusts in the background) and return the
+  // row to append to the lesson's results.
+  function recordOne(id, score, total, level, notes = '') {
+    const { newLevel } = progress.computeLevelChange(id, score, total, level)
+    progress.recordResult(id, score, total, newLevel, notes, level)
+    track('activity_complete', { activity_id: id, score, total, level })
+    return { id, score, total, level, mode: getMode(id) }
+  }
 
+  // Advance to the next slot, or finish the lesson and show the summary.
+  function advanceAfter(results) {
+    setLessonResults(results)
     const nextIndex = lessonIndex + 1
     if (nextIndex < lesson.length) {
       setLessonIndex(nextIndex)
       setScreen('activity')
     } else {
-      progress.completeLesson(lesson.map(q => q.id), playedLessonIndex)
+      progress.completeLesson(results.map(r => r.id), playedLessonIndex)
       const scored = results.filter(r => r.mode === 'measured' && r.total > 0)
       const scorePct = scored.length
         ? Math.round(scored.reduce((s, r) => s + (r.score / r.total) * 100, 0) / scored.length)
@@ -133,6 +161,19 @@ export default function App() {
       track('lesson_complete', { lesson_number: playedLessonIndex + 1, activities: results.length, score_pct: scorePct })
       setScreen('lessonSummary')
     }
+  }
+
+  // A normal single-activity slot finished.
+  function onActivityDone(score, total, notes = '') {
+    const item = lesson[lessonIndex]
+    advanceAfter([...lessonResults, recordOne(item.id, score, total, item.level, notes)])
+  }
+
+  // The interleaved mixed slot finished — record each source activity separately
+  // so the adaptive engine still adjusts each one's level.
+  function onMixedDone(perSource) {
+    const rows = perSource.map(r => recordOne(r.id, r.score, r.total, r.level))
+    advanceAfter([...lessonResults, ...rows])
   }
 
   if (!isAppRoute) {
@@ -160,6 +201,16 @@ export default function App() {
     )
   }
 
+  if (screen === 'activity' && currentItem && currentItem.id === '__mixed__') {
+    return (
+      <MixedQuiz
+        sources={currentItem.sources}
+        onDone={onMixedDone}
+        onBack={exitLesson}
+      />
+    )
+  }
+
   if (screen === 'activity' && currentItem) {
     const ActivityComponent = ACTIVITY_COMPONENTS[currentItem.id]
     if (!ActivityComponent) { setScreen('dashboard'); return null }
@@ -167,6 +218,7 @@ export default function App() {
       <ActivityComponent
         activityId={currentItem.id}
         level={currentItem.level}
+        exposure={currentItem.exposure || 0}
         onDone={onActivityDone}
         onBack={exitLesson}
       />

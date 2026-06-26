@@ -1,14 +1,15 @@
 import { useState } from 'react'
-import { getActivityLevel, getActivity } from '../../data/activities'
+import { getOrderedLevels, ladderWindow, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
 
-export default function CopyText({ activityId, level, onDone, onBack }) {
+export default function CopyText({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
   const activity = getActivity(activityId, lang)
-  const levelData = getActivityLevel(activityId, level, lang)
-  const allPassages = levelData?.passages || []
+  // Passages are tagged by language inside one array, so gather across all
+  // levels, filter to this language, then walk the ladder by exposure.
+  const allPassages = getOrderedLevels(activityId, lang).flatMap(l => l.passages || [])
   const wantedPassages = allPassages.filter(p => p.lang === (lang === 'hi' ? 'hi' : 'en'))
-  const passages = wantedPassages.length ? wantedPassages : allPassages
+  const passages = ladderWindow(wantedPassages.length ? wantedPassages : allPassages, exposure, 2)
 
   const [pIndex, setPIndex] = useState(0)
   const [typed, setTyped] = useState('')

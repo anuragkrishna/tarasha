@@ -1110,3 +1110,58 @@ export function getActivityLevel(id, level, lang) {
   const lv = activity.levels.find(l => l.level === level) || activity.levels[0]
   return lv && lang === 'hi' ? localize(lv, lang) : lv
 }
+
+// All of an activity's levels in easy→hard order, localized. Used to build the
+// difficulty "ladder" — the full question bank across every level.
+export function getOrderedLevels(id, lang) {
+  const a = ACTIVITIES.find(x => x.id === id)
+  if (!a || !a.levels) return []
+  const levels = [...a.levels].sort((x, y) => x.level - y.level)
+  return lang === 'hi' ? levels.map(l => localize(l, lang)) : levels
+}
+
+// Take `n` items from `arr` starting at the exposure offset, wrapping at the end:
+// exposure 0 → items 0..n-1, exposure 1 → items n..2n-1, … so each repeat of an
+// activity serves the next, tougher questions.
+export function ladderWindow(arr, exposure = 0, n = 2) {
+  if (!arr || !arr.length) return []
+  const span = Math.min(n, arr.length)
+  const start = ((exposure * n) % arr.length + arr.length) % arr.length
+  const out = []
+  for (let i = 0; i < span; i++) out.push(arr[(start + i) % arr.length])
+  return out
+}
+
+// Which array on a level object holds that activity's questions. (copy-text and
+// sentence-repeat are excluded — they tag rows by language inside one array and
+// are windowed in-component after the language filter.)
+const CONTENT_KEY = {
+  'memory-numbers': 'numbers',
+  'items-recall': 'lists',
+  'reverse-counting': 'sequences',
+  'cause-effect': 'pairs',
+  'picture-story': 'stories',
+  'story-narration': 'stories',
+  'cooking-plan': 'recipes',
+  'delayed-recall': 'rounds',
+  'describe-picture': 'scenes',
+}
+
+// Walk the full easy→hard question bank (all levels) and return a window of `n`
+// items for the given exposure. Non-content level metadata (showDuration,
+// sentenceTarget…) comes from the window's first item's level. Shaped like a
+// level object so callers are a drop-in swap for getActivityLevel. Localises
+// before windowing so _hi sibling arrays survive. Returns null if no bank.
+export function getLadderContent(id, exposure = 0, lang, n = 2) {
+  const activity = ACTIVITIES.find(x => x.id === id)
+  const key = CONTENT_KEY[id]
+  if (!activity || !activity.levels || !key) return null
+  const levels = [...activity.levels]
+    .sort((a, b) => a.level - b.level)
+    .map(lv => (lang === 'hi' ? localize(lv, lang) : lv))
+  const bank = []
+  for (const lv of levels) for (const item of (lv[key] || [])) bank.push({ item, lv })
+  if (!bank.length) return null
+  const win = ladderWindow(bank, exposure, n)
+  return { ...win[0].lv, [key]: win.map(w => w.item) }
+}

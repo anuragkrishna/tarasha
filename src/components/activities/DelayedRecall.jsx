@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { getActivityLevel, getActivity } from '../../data/activities'
+import { getActivityLevel, getLadderContent, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
 
-export default function DelayedRecall({ activityId, level, onDone, onBack }) {
+export default function DelayedRecall({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
   const activity = getActivity(activityId, lang)
-  const levelData = getActivityLevel(activityId, level, lang)
+  const levelData = getLadderContent(activityId, exposure, lang, 2) || getActivityLevel(activityId, level, lang)
   const rounds = levelData?.rounds || []
   const showDuration = levelData?.showDuration || 5000
 
@@ -90,7 +90,7 @@ export default function DelayedRecall({ activityId, level, onDone, onBack }) {
       <div className="activity-header">
         <button className="back-btn" onClick={onBack}>←</button>
         <div className="activity-title">{pickField(activity, 'title', lang)}</div>
-        <span className="level-badge">{t('level')} {level}</span>
+        <span className="level-badge">{t('level')} {levelData?.level || level}</span>
       </div>
 
       <div className="progress-dots">

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { getActivityLevel, getActivity } from '../../data/activities'
+import { getActivityLevel, getLadderContent, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
 
 function buildSequence(start, step, count) {
@@ -8,10 +8,10 @@ function buildSequence(start, step, count) {
   return seq
 }
 
-export default function ReverseCounting({ activityId, level, onDone, onBack }) {
+export default function ReverseCounting({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
   const activity = getActivity(activityId, lang)
-  const levelData = getActivityLevel(activityId, level, lang)
+  const levelData = getLadderContent(activityId, exposure, lang, 2) || getActivityLevel(activityId, level, lang)
   const sequences = levelData?.sequences || []
 
   const [sIndex, setSIndex] = useState(0)
@@ -72,7 +72,7 @@ export default function ReverseCounting({ activityId, level, onDone, onBack }) {
       <div className="activity-header">
         <button className="back-btn" onClick={onBack}>←</button>
         <div className="activity-title">{pickField(activity, 'title', lang)}</div>
-        <span className="level-badge">{t('level')} {level}</span>
+        <span className="level-badge">{t('level')} {levelData?.level || level}</span>
       </div>
 
       <div className="instruction-box">
