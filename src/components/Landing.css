@@ -34,20 +34,20 @@
 .landing-page .lp-lang.is-active { background: var(--lp-navy); border-color: var(--lp-navy); color: #fff; }
 
 .landing-page .lp-stage {
-  width: 100%; max-width: 1040px;
-  display: flex; align-items: center; gap: 48px;
+  width: 100%; max-width: 1080px;
+  display: flex; align-items: center; gap: 68px;
   opacity: 0; transform: translateY(10px);
   animation: lp-rise .6s ease forwards;
 }
 @keyframes lp-rise { to { opacity: 1; transform: none; } }
 
-.landing-page .lp-left { flex: 0 0 36%; display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
+.landing-page .lp-left { flex: 0 0 42%; display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
 .landing-page .lp-art {
   background: var(--lp-panel); border-radius: 18px; padding: 34px;
   display: flex; align-items: center; justify-content: center;
 }
 .landing-page .lp-brain { width: 100%; height: auto; display: block; }
-.landing-page .lp-body { flex: 1; }
+.landing-page .lp-body { flex: 1; padding-left: 16px; }
 
 .landing-page .lp-eyebrow {
   font-family: var(--lp-display); font-weight: 700; font-size: 13px;
@@ -73,7 +73,7 @@
 }
 .landing-page .lp-btn-ghost:hover { border-color: var(--lp-teal); }
 
-.landing-page .lp-pillars { display: flex; align-items: center; justify-content: flex-start; gap: 11px; flex-wrap: wrap; padding: 0 4px; }
+.landing-page .lp-pillars { display: flex; align-items: center; justify-content: center; gap: 11px; flex-wrap: wrap; padding: 0 4px; }
 .landing-page .lp-pillar { font-family: var(--lp-display); font-weight: 600; font-size: 13.5px; color: var(--lp-navy); white-space: nowrap; }
 .landing-page .lp-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--lp-teal); flex: none; }
 
