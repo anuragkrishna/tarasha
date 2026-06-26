@@ -1092,18 +1092,18 @@ export const ACTIVITIES = [
         rounds: [
           {
             target: 'Apple', target_hi: 'सेब',
-            words: ['Mango', 'Apple', 'Chair', 'Banana', 'Apple', 'Table'],
-            words_hi: ['आम', 'सेब', 'कुर्सी', 'केला', 'सेब', 'मेज़'],
+            words: ['Apple', 'Mango', 'Apple', 'Chair', 'Apple', 'Banana', 'Apple', 'Table', 'Cup', 'Apple', 'Pen'],
+            words_hi: ['सेब', 'आम', 'सेब', 'कुर्सी', 'सेब', 'केला', 'सेब', 'मेज़', 'कप', 'सेब', 'कलम'],
           },
           {
             target: 'Dog', target_hi: 'कुत्ता',
-            words: ['Cat', 'Dog', 'Sun', 'Book', 'Dog', 'Cup'],
-            words_hi: ['बिल्ली', 'कुत्ता', 'सूरज', 'किताब', 'कुत्ता', 'कप'],
+            words: ['Cat', 'Dog', 'Sun', 'Dog', 'Book', 'Dog', 'Cup', 'Dog', 'Moon', 'Dog', 'Ball'],
+            words_hi: ['बिल्ली', 'कुत्ता', 'सूरज', 'कुत्ता', 'किताब', 'कुत्ता', 'कप', 'कुत्ता', 'चाँद', 'कुत्ता', 'गेंद'],
           },
           {
             target: 'Sun', target_hi: 'सूरज',
-            words: ['Moon', 'Sun', 'Tree', 'Car', 'Sun', 'Fish'],
-            words_hi: ['चाँद', 'सूरज', 'पेड़', 'गाड़ी', 'सूरज', 'मछली'],
+            words: ['Moon', 'Sun', 'Tree', 'Sun', 'Car', 'Sun', 'Fish', 'Sun', 'Cup', 'Sun', 'Book'],
+            words_hi: ['चाँद', 'सूरज', 'पेड़', 'सूरज', 'गाड़ी', 'सूरज', 'मछली', 'सूरज', 'कप', 'सूरज', 'किताब'],
           },
         ]
       },
@@ -1112,18 +1112,18 @@ export const ACTIVITIES = [
         rounds: [
           {
             target: 'Ball', target_hi: 'गेंद',
-            words: ['Cup', 'Ball', 'Book', 'Ball', 'Tree', 'Cup', 'Ball', 'Car'],
-            words_hi: ['कप', 'गेंद', 'किताब', 'गेंद', 'पेड़', 'कप', 'गेंद', 'गाड़ी'],
+            words: ['Cup', 'Ball', 'Book', 'Ball', 'Tree', 'Ball', 'Cup', 'Ball', 'Car', 'Ball', 'Moon', 'Ball', 'Pen'],
+            words_hi: ['कप', 'गेंद', 'किताब', 'गेंद', 'पेड़', 'गेंद', 'कप', 'गेंद', 'गाड़ी', 'गेंद', 'चाँद', 'गेंद', 'कलम'],
           },
           {
             target: 'Cat', target_hi: 'बिल्ली',
-            words: ['Dog', 'Cat', 'Fish', 'Cat', 'Sun', 'Dog', 'Cat', 'Moon'],
-            words_hi: ['कुत्ता', 'बिल्ली', 'मछली', 'बिल्ली', 'सूरज', 'कुत्ता', 'बिल्ली', 'चाँद'],
+            words: ['Dog', 'Cat', 'Fish', 'Cat', 'Sun', 'Cat', 'Dog', 'Cat', 'Moon', 'Cat', 'Tree', 'Cat', 'Cup'],
+            words_hi: ['कुत्ता', 'बिल्ली', 'मछली', 'बिल्ली', 'सूरज', 'बिल्ली', 'कुत्ता', 'बिल्ली', 'चाँद', 'बिल्ली', 'पेड़', 'बिल्ली', 'कप'],
           },
           {
             target: 'Book', target_hi: 'किताब',
-            words: ['Pen', 'Book', 'Cup', 'Table', 'Book', 'Chair', 'Book', 'Ball'],
-            words_hi: ['कलम', 'किताब', 'कप', 'मेज़', 'किताब', 'कुर्सी', 'किताब', 'गेंद'],
+            words: ['Pen', 'Book', 'Cup', 'Book', 'Table', 'Book', 'Chair', 'Book', 'Ball', 'Book', 'Tree', 'Book', 'Sun'],
+            words_hi: ['कलम', 'किताब', 'कप', 'किताब', 'मेज़', 'किताब', 'कुर्सी', 'किताब', 'गेंद', 'किताब', 'पेड़', 'किताब', 'सूरज'],
           },
         ]
       },
@@ -1132,18 +1132,18 @@ export const ACTIVITIES = [
         rounds: [
           {
             target: 'Tree', target_hi: 'पेड़',
-            words: ['Car', 'Tree', 'Fish', 'Moon', 'Tree', 'Cup', 'Sun', 'Tree', 'Book', 'Ball'],
-            words_hi: ['गाड़ी', 'पेड़', 'मछली', 'चाँद', 'पेड़', 'कप', 'सूरज', 'पेड़', 'किताब', 'गेंद'],
+            words: ['Car', 'Tree', 'Fish', 'Tree', 'Moon', 'Tree', 'Cup', 'Tree', 'Book', 'Tree', 'Ball', 'Tree', 'Sun', 'Cat'],
+            words_hi: ['गाड़ी', 'पेड़', 'मछली', 'पेड़', 'चाँद', 'पेड़', 'कप', 'पेड़', 'किताब', 'पेड़', 'गेंद', 'पेड़', 'सूरज', 'बिल्ली'],
           },
           {
             target: 'Fish', target_hi: 'मछली',
-            words: ['Tree', 'Fish', 'Cat', 'Cup', 'Fish', 'Dog', 'Moon', 'Fish', 'Car', 'Sun'],
-            words_hi: ['पेड़', 'मछली', 'बिल्ली', 'कप', 'मछली', 'कुत्ता', 'चाँद', 'मछली', 'गाड़ी', 'सूरज'],
+            words: ['Tree', 'Fish', 'Cat', 'Fish', 'Cup', 'Fish', 'Dog', 'Fish', 'Moon', 'Fish', 'Car', 'Fish', 'Sun', 'Ball'],
+            words_hi: ['पेड़', 'मछली', 'बिल्ली', 'मछली', 'कप', 'मछली', 'कुत्ता', 'मछली', 'चाँद', 'मछली', 'गाड़ी', 'मछली', 'सूरज', 'गेंद'],
           },
           {
             target: 'Moon', target_hi: 'चाँद',
-            words: ['Sun', 'Moon', 'Ball', 'Tree', 'Moon', 'Fish', 'Cup', 'Moon', 'Dog', 'Book'],
-            words_hi: ['सूरज', 'चाँद', 'गेंद', 'पेड़', 'चाँद', 'मछली', 'कप', 'चाँद', 'कुत्ता', 'किताब'],
+            words: ['Sun', 'Moon', 'Ball', 'Moon', 'Tree', 'Moon', 'Fish', 'Moon', 'Cup', 'Moon', 'Dog', 'Moon', 'Book', 'Cat'],
+            words_hi: ['सूरज', 'चाँद', 'गेंद', 'चाँद', 'पेड़', 'चाँद', 'मछली', 'चाँद', 'कप', 'चाँद', 'कुत्ता', 'चाँद', 'किताब', 'बिल्ली'],
           },
         ]
       },

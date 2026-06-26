@@ -3,7 +3,7 @@ import { getActivityLevel, getLadderContent, getActivity } from '../../data/acti
 import { useLang, pickField } from '../../i18n'
 
 const MAX_STRIKES = 3
-const WINDOW_MS = 1200   // listening window after each word
+const WINDOW_MS = 1800   // listening window after each word (generous, slow pace)
 const CLAP_MAX_MS = 180  // a clap is a short, sharp burst
 const VOICE_MIN_MS = 220 // sustained sound = talking, not a clap
 
@@ -16,7 +16,7 @@ function speak(text, lang) {
       if (!synth) return resolve()
       const u = new SpeechSynthesisUtterance(text)
       u.lang = lang === 'hi' ? 'hi-IN' : 'en-IN'
-      u.rate = 0.95
+      u.rate = 0.8
       let done = false
       const finish = () => { if (!done) { done = true; resolve() } }
       u.onend = finish
@@ -32,7 +32,7 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
   const activity = getActivity(activityId, lang)
-  const levelData = getLadderContent(activityId, exposure, lang, 2) || getActivityLevel(activityId, level, lang)
+  const levelData = getLadderContent(activityId, exposure, lang, 1) || getActivityLevel(activityId, level, lang)
   const rounds = levelData?.rounds || []
 
   const [phase, setPhase] = useState('intro')      // intro | manual | running | result
@@ -152,7 +152,7 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
       setTarget(tgt)
       setStatus('')
       await speak(`${t('clapTargetIs')} ${tgt}`, lang)
-      await sleep(500)
+      await sleep(900)
 
       for (const word of round.words) {
         if (cancelledRef.current) return
@@ -176,7 +176,7 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
           setStrikes(localStrikes)
           if (localStrikes >= MAX_STRIKES) { failed = true; break }
         }
-        await sleep(350)
+        await sleep(700)
       }
       if (failed) break
     }

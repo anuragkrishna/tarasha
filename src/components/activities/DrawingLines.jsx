@@ -103,12 +103,10 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
   const guideRef = useRef(null)
   const drawing = useRef(false)
   const lastPos = useRef(null)
-  const strokePoints = useRef([]) // points drawn this round
-  const pathsRef = useRef([])     // current round's guide geometry
-  const roundScores = useRef([])  // objective 0..1 score per round
-  const [round, setRound] = useState(0)
-  const [done, setDone] = useState(false)
-  const TOTAL_ROUNDS = 3
+  const strokePoints = useRef([]) // points drawn so far
+  const pathsRef = useRef([])     // current guide geometry
+  const [checked, setChecked] = useState(false)
+  const [score, setScore] = useState(0) // objective 0..1 accuracy
 
   const type = levelData?.type || 'horizontal'
 
@@ -123,7 +121,7 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
     const paths = GUIDES[type](w, h)
     pathsRef.current = paths
     drawGuide(guide.getContext('2d'), paths, w, h)
-  }, [round, type])
+  }, [type])
 
   function getPos(e, canvas) {
     const rect = canvas.getBoundingClientRect()
@@ -168,18 +166,9 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
     strokePoints.current = []
   }
 
-  function next() {
-    // Score this round before clearing the captured strokes
-    roundScores.current.push(scoreTrace(strokePoints.current, pathsRef.current))
-    clearCanvas()
-    if (round + 1 >= TOTAL_ROUNDS) setDone(true)
-    else setRound(r => r + 1)
-  }
-
-  if (done) {
-    const scores = roundScores.current
-    queueMicrotask(() => onDone(scores.reduce((a, b) => a + b, 0), TOTAL_ROUNDS))
-    return null
+  function check() {
+    setScore(scoreTrace(strokePoints.current, pathsRef.current))
+    setChecked(true)
   }
 
   return (
@@ -195,7 +184,6 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
       </div>
 
       <div className="card" style={{ position: 'relative', padding: 24, cursor: 'crosshair', touchAction: 'none' }}>
-        <p className="text-muted mb-8" style={{ fontSize: 17 }}>{t('roundOf', { i: round + 1, n: TOTAL_ROUNDS })}</p>
         <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', background: '#FAFAFA', border: '2px solid var(--border)' }}>
           {/* Guide canvas (dotted lines) */}
           <canvas
@@ -217,12 +205,29 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
         </div>
       </div>
 
-      <div className="flex gap-12 mt-16">
-        <button className="btn btn-ghost" onClick={clearCanvas}>{t('clear')}</button>
-        <button className="btn btn-primary" style={{ flex: 1 }} onClick={next}>
-          {round + 1 < TOTAL_ROUNDS ? t('nextRound') : t('finish')}
+      {checked && (
+        <div style={{
+          marginTop: 16, padding: 16, borderRadius: 12,
+          background: '#EAFAF1', color: 'var(--success)',
+          fontWeight: 700, textAlign: 'center',
+        }}>
+          <div style={{ fontSize: 30 }}>{Math.round(score * 100)}%</div>
+          <div style={{ fontSize: 15, fontWeight: 600 }}>{t('drawAvgLabel')}</div>
+        </div>
+      )}
+
+      {checked ? (
+        <button className="btn btn-primary btn-lg w-full mt-16" onClick={() => onDone(score, 1)}>
+          {t('nextQuestion')}
         </button>
-      </div>
+      ) : (
+        <div className="flex gap-12 mt-16">
+          <button className="btn btn-ghost" onClick={clearCanvas}>{t('clear')}</button>
+          <button className="btn btn-primary" style={{ flex: 1 }} onClick={check}>
+            {t('check')}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
