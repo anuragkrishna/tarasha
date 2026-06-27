@@ -24,7 +24,7 @@
   display: flex;
   align-items: flex-start;     /* don't stretch the stage to full height (that broke scrolling) */
   justify-content: center;
-  padding: 28px 24px;
+  padding: 9vh 24px 5vh;       /* sit a little below the top, still scrolls when tall */
 }
 /* Top-aligned (pulled up) and horizontally centred; scrolls if taller than the screen. */
 .landing-page .lp-stage { margin: 0 auto; }
