@@ -162,43 +162,6 @@ export const ACTIVITIES = [
   },
 
   {
-    id: 'copy-text',
-    category: 'Learning',
-    title: 'Copy Text',
-    title_hi: 'देखकर लिखो',
-    icon: '✏️',
-    description: 'Read and copy the text below',
-    description_hi: 'दिया हुआ पढ़कर लिखें',
-    levels: [
-      {
-        level: 1,
-        passages: [
-          { text: 'The sun rises in the east.\nThe sky is blue.', lang: 'en' },
-          { text: 'सूरज पूरब में उगता है।\nआसमान नीला है।', lang: 'hi' },
-          { text: 'Birds fly in the sky.\nFish swim in water.', lang: 'en' },
-          { text: 'पानी ठंडा है।\nदूध सफेद होता है।', lang: 'hi' },
-        ]
-      },
-      {
-        level: 2,
-        passages: [
-          { text: 'The dog barked at the gate.\nThe cat sat near the window.\nBoth animals are pets.', lang: 'en' },
-          { text: 'राधा बाजार गई।\nउसने सब्जियाँ खरीदीं।\nवह खुश होकर घर लौटी।', lang: 'hi' },
-          { text: 'Every morning I drink tea.\nThen I read the newspaper.\nThis is my daily routine.', lang: 'en' },
-          { text: 'बच्चे स्कूल जाते हैं।\nवे पढ़ते और खेलते हैं।\nशाम को वे घर आते हैं।', lang: 'hi' },
-        ]
-      },
-      {
-        level: 3,
-        passages: [
-          { text: 'The farmer woke up early in the morning.\nHe went to his field with his tools.\nHe worked hard all day under the sun.\nIn the evening he returned home tired but happy.', lang: 'en' },
-          { text: 'सुबह होते ही चिड़िया चहचहाने लगती हैं।\nफूल खिल जाते हैं और हवा सुगंधित होती है।\nबच्चे स्कूल की ओर दौड़ते हैं।\nसारी दुनिया जाग जाती है एक नए दिन के लिए।', lang: 'hi' },
-        ]
-      }
-    ]
-  },
-
-  {
     id: 'memory-numbers',
     category: 'Short Term Memory',
     title: 'Remember Numbers',
@@ -209,17 +172,17 @@ export const ACTIVITIES = [
     levels: [
       {
         level: 1,
-        showDuration: 6000,
+        showDuration: 10000,
         numbers: ['3472', '8165', '5920', '7341', '6083']
       },
       {
         level: 2,
-        showDuration: 5000,
+        showDuration: 10000,
         numbers: ['947382', '561028', '734916', '208547', '693014']
       },
       {
         level: 3,
-        showDuration: 4000,
+        showDuration: 10000,
         numbers: ['98347261', '50162839', '74520163', '31804975', '62948013']
       }
     ]

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Dashboard from './components/Dashboard'
 import Landing from './components/Landing'
 import Progress from './components/Progress'
-import CopyText from './components/activities/CopyText'
 import MemoryNumbers from './components/activities/MemoryNumbers'
 import ReverseCounting from './components/activities/ReverseCounting'
 import ItemsRecall from './components/activities/ItemsRecall'
@@ -50,7 +49,6 @@ function spreadByCategory(steps) {
 // Non-quiz activities run as their own step; quiz activities are expanded into
 // individual question steps and mixed through the lesson.
 const ACTIVITY_COMPONENTS = {
-  'copy-text': CopyText,
   'memory-numbers': MemoryNumbers,
   'reverse-counting': ReverseCounting,
   'items-recall': ItemsRecall,
