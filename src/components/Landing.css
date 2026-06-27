@@ -14,20 +14,20 @@
   --lp-body: 'Mulish', 'Noto Sans', 'Noto Sans Devanagari', sans-serif;
 
   position: relative;
-  min-height: calc(100vh / var(--zoom, 1));
-  height: calc(100vh / var(--zoom, 1));
+  min-height: 100vh;
+  height: 100vh;
   overflow-y: auto;            /* scroll if the content is taller than the screen */
   background: var(--lp-page);
   color: var(--lp-ink);
   font-family: var(--lp-body);
   -webkit-font-smoothing: antialiased;
   display: flex;
-  align-items: flex-start;     /* don't stretch the stage to full height (that broke scrolling) */
+  align-items: flex-start;     /* don't stretch the stage */
   justify-content: center;
-  padding: 9vh 24px 5vh;       /* sit a little below the top, still scrolls when tall */
+  padding: 40px 24px;          /* always keep a gap from the top/bottom edges */
 }
-/* Top-aligned (pulled up) and horizontally centred; scrolls if taller than the screen. */
-.landing-page .lp-stage { margin: 0 auto; }
+/* margin auto centres the stage with breathing room, and scrolls if ever too tall */
+.landing-page .lp-stage { margin: auto; }
 
 /* Language toggle — top right */
 .landing-page .lp-langs { position: absolute; top: 18px; right: 18px; display: flex; gap: 8px; z-index: 5; }

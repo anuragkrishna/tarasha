@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLang } from '../i18n'
-import { useTextScale, SCALES } from '../hooks/useTextScale'
 
 function GoogleG() {
   return (
@@ -20,7 +19,6 @@ function GoogleG() {
 
 export default function ProfileMenu({ user, configured, signIn, signOut, onViewLog }) {
   const { t, lang, setLang } = useLang()
-  const [scale, setScale] = useTextScale()
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
 
@@ -113,32 +111,6 @@ export default function ProfileMenu({ user, configured, signIn, signOut, onViewL
                     border: `2px solid ${lang === code ? 'var(--primary)' : 'var(--border)'}`,
                     background: lang === code ? 'var(--primary)' : 'var(--surface)',
                     color: lang === code ? 'var(--on-primary)' : 'var(--text)',
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ height: 1, background: 'var(--border)', margin: '8px 6px' }} />
-
-          {/* Text size */}
-          <div style={{ padding: '4px 14px 8px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
-              {t('textSizeLabel')}
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {Object.keys(SCALES).map((label, i) => (
-                <button
-                  key={label}
-                  onClick={() => setScale(label)}
-                  style={{
-                    flex: 1, padding: '8px 0', borderRadius: 10, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
-                    fontSize: 14 + i * 3,
-                    border: `2px solid ${scale === label ? 'var(--primary)' : 'var(--border)'}`,
-                    background: scale === label ? 'var(--primary)' : 'var(--surface)',
-                    color: scale === label ? 'var(--on-primary)' : 'var(--text)',
                   }}
                 >
                   {label}

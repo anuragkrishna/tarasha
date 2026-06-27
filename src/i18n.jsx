@@ -46,7 +46,6 @@ const STRINGS = {
     continueBtn: 'Continue',
     signOut: 'Sign out',
     languageLabel: 'Language',
-    textSizeLabel: 'Text size',
 
     // Landing page
     landingEyebrow: 'Tarasha',
@@ -383,7 +382,6 @@ const STRINGS = {
     continueBtn: 'जारी रखें',
     signOut: 'साइन आउट',
     languageLabel: 'भाषा',
-    textSizeLabel: 'अक्षर का आकार',
 
     landingEyebrow: 'तराशा',
     landingHeadline: 'दिमाग़ को active रखें',
