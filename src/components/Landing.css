@@ -22,12 +22,13 @@
   font-family: var(--lp-body);
   -webkit-font-smoothing: antialiased;
   display: flex;
-  align-items: flex-start;     /* don't stretch the stage to full height (that broke scrolling) */
+  align-items: flex-start;     /* don't stretch the stage (that broke scrolling) */
   justify-content: center;
-  padding: 9vh 24px 5vh;       /* sit a little below the top, still scrolls when tall */
+  padding: 24px;
 }
-/* Top-aligned (pulled up) and horizontally centred; scrolls if taller than the screen. */
-.landing-page .lp-stage { margin: 0 auto; }
+/* margin auto vertically centres the stage when it fits (pillars land in the
+   lower half), and collapses to a scrollable top-aligned layout when it's tall. */
+.landing-page .lp-stage { margin: auto; }
 
 /* Language toggle — top right */
 .landing-page .lp-langs { position: absolute; top: 18px; right: 18px; display: flex; gap: 8px; z-index: 5; }
