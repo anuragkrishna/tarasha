@@ -68,7 +68,6 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
   const cueTimer = useRef(null)
   const [checked, setChecked] = useState(false)
   const [score, setScore] = useState(0)
-  const [slips, setSlips] = useState(0)
   const [outside, setOutside] = useState(false) // drives the red visual cue
 
   const type = levelData?.shape || 'circle'
@@ -108,7 +107,6 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
     } else {
       ctx.fillStyle = STRAY
       slipRef.current++
-      setSlips(slipRef.current)
       flagOutside()
     }
     ctx.fill()
@@ -146,7 +144,7 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
     const c = canvasRef.current
     c.getContext('2d').clearRect(0, 0, c.width, c.height)
     insidePts.current = []; slipRef.current = 0; totalRef.current = 0
-    setSlips(0); setOutside(false)
+    setOutside(false)
   }
 
   // Coverage: share of the shape's interior that actually got painted.
@@ -220,14 +218,6 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
             </div>
           )}
         </div>
-        {!checked && (
-          <div style={{
-            marginTop: 12, textAlign: 'center', fontWeight: 700,
-            color: slips ? 'var(--error)' : 'var(--text-muted)',
-          }}>
-            {t('colorSlips', { n: slips })}
-          </div>
-        )}
       </div>
 
       {/* Reserved space so the button stays put whether or not the score shows. */}
