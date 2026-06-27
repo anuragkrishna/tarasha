@@ -23,6 +23,7 @@ import { useProgress } from './hooks/useProgress'
 import { useAuth } from './hooks/useAuth'
 import { useLang } from './i18n'
 import { getMode } from './dailyPlan'
+import { applyTextScale, getTextScale } from './hooks/useTextScale'
 import { lessonInfo } from './lessons'
 import { quizQuestions, interleave, shuffle } from './quiz'
 import { ACTIVITIES } from './data/activities'
@@ -117,6 +118,11 @@ export default function App() {
   const isAppRoute = path.startsWith('/app')
 
   useEffect(() => { track('app_open') }, [])
+
+  // The landing page is always standard size; the app uses the chosen text size.
+  useEffect(() => {
+    applyTextScale(isAppRoute ? getTextScale() : 'A')
+  }, [isAppRoute])
 
   useEffect(() => {
     if (!isAppRoute && auth.ready && auth.user) navigate('/app')
