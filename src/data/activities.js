@@ -679,6 +679,21 @@ export const ACTIVITIES = [
   },
 
   {
+    id: 'color-inside',
+    category: 'Topic Maintenance',
+    title: 'Color the Shape',
+    title_hi: 'आकृति में रंग भरो',
+    icon: '🎨',
+    description: 'Color inside the shape without crossing the outline',
+    description_hi: 'लाइन पार किए बिना आकृति के अंदर रंग भरें',
+    levels: [
+      { level: 1, shape: 'circle', label: 'A round circle', label_hi: 'एक गोल आकृति' },
+      { level: 2, shape: 'square', label: 'A square box', label_hi: 'एक चौकोर डिब्बा' },
+      { level: 3, shape: 'triangle', label: 'A triangle', label_hi: 'एक तिकोन' },
+    ]
+  },
+
+  {
     id: 'cooking-plan',
     category: 'Learning',
     title: 'Cooking Plan',

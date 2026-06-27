@@ -220,6 +220,12 @@ const STRINGS = {
     drawRoundScore: 'Round {i}: {p}%',
     drawAvgLabel: 'How closely you traced the lines',
 
+    // Color inside (inhibition)
+    colorRule: 'Color inside the shape. Stay within the outline.',
+    colorSlip: 'Outside the line!',
+    colorSlips: 'Times you went outside: {n}',
+    colorAvgLabel: 'How well you stayed inside the lines',
+
     // Breath count
     breathFollow: 'Follow the circle. Breathe in as it grows, out as it shrinks. Count each breath.',
     breathOf: 'Breath {i} of {n}',
@@ -538,6 +544,11 @@ const STRINGS = {
     drawAccuracy: 'सटीकता',
     drawRoundScore: 'राउंड {i}: {p}%',
     drawAvgLabel: 'आपने लाइनों पर कितनी सटीकता से चलाया',
+
+    colorRule: 'आकृति के अंदर रंग भरें। लाइन के अंदर ही रहें।',
+    colorSlip: 'लाइन से बाहर!',
+    colorSlips: 'आप कितनी बार बाहर गए: {n}',
+    colorAvgLabel: 'आप लाइन के अंदर कितना रहे',
 
     breathFollow: 'गोले को देखें। बड़ा हो तो साँस लें, छोटा हो तो छोड़ें। हर साँस गिनें।',
     breathOf: 'साँस {i}/{n}',
