@@ -44,6 +44,7 @@ const STRINGS = {
     gateTitle: 'Sign in to continue',
     gateSub: 'Sign in with Google to keep doing lessons and save your progress across devices.',
     continueBtn: 'Continue',
+    goBack: 'Go back',
     signOut: 'Sign out',
     languageLabel: 'Language',
 
@@ -380,6 +381,7 @@ const STRINGS = {
     gateTitle: 'जारी रखने के लिए साइन इन करें',
     gateSub: 'लेसन जारी रखने और सभी डिवाइस पर प्रगति सहेजने के लिए Google से साइन इन करें।',
     continueBtn: 'जारी रखें',
+    goBack: 'वापस जाएँ',
     signOut: 'साइन आउट',
     languageLabel: 'भाषा',
 

@@ -240,7 +240,7 @@ export default function App() {
           ) : (
             <button className="btn btn-primary btn-lg" onClick={auth.signIn}>{t('signInGoogle')}</button>
           )}
-          <button className="btn btn-ghost" onClick={() => setScreen('dashboard')}>{t('backToActivities')}</button>
+          <button className="btn btn-ghost" onClick={() => setScreen('dashboard')}>{t('goBack')}</button>
         </div>
       </div>
     )
