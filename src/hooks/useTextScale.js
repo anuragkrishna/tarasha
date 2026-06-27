@@ -10,7 +10,7 @@ export function applyTextScale(label) {
 }
 
 export function getTextScale() {
-  try { return localStorage.getItem(KEY) || 'A' } catch { return 'A' }
+  try { return localStorage.getItem(KEY) || 'A+' } catch { return 'A+' }
 }
 
 export function useTextScale() {

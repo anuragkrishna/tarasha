@@ -13,7 +13,7 @@ function perfColor(pct) {
   return 'var(--error)'
 }
 
-export default function LessonSummary({ results, lessonNumber, onNext, onDone }) {
+export default function LessonSummary({ results, lessonNumber, onNext, onRetry, onDone }) {
   const { t, lang } = useLang()
 
   const scored = results.filter(r => r.mode === 'measured' && r.total > 0)
@@ -79,9 +79,16 @@ export default function LessonSummary({ results, lessonNumber, onNext, onDone })
         <button className="btn btn-primary btn-lg w-full" onClick={onNext}>
           {t('nextLesson')}
         </button>
-        <button className="btn btn-ghost w-full" onClick={onDone}>
-          {t('done')}
-        </button>
+        <div className="flex gap-10">
+          {onRetry && (
+            <button className="btn btn-ghost w-full" onClick={onRetry}>
+              {t('retry')}
+            </button>
+          )}
+          <button className="btn btn-ghost w-full" onClick={onDone}>
+            {t('done')}
+          </button>
+        </div>
       </div>
     </div>
   )

@@ -25,7 +25,27 @@ import { useLang } from './i18n'
 import { getMode } from './dailyPlan'
 import { lessonInfo } from './lessons'
 import { quizQuestions, interleave, shuffle } from './quiz'
+import { ACTIVITIES } from './data/activities'
 import { track } from './firebase'
+
+const CATEGORY_OF = Object.fromEntries(ACTIVITIES.map(a => [a.id, a.category]))
+
+// Reorder steps so no two consecutive share a category (recall after recall,
+// etc.) — greedily take from the largest remaining group that isn't the last one.
+function spreadByCategory(steps) {
+  const groups = {}
+  for (const s of steps) (groups[s.cat] = groups[s.cat] || []).push(s)
+  const out = []
+  let last = null
+  while (out.length < steps.length) {
+    const cats = Object.keys(groups).filter(c => groups[c].length)
+    cats.sort((a, b) => groups[b].length - groups[a].length)
+    const pick = cats.find(c => c !== last) ?? cats[0]
+    out.push(groups[pick].shift())
+    last = pick
+  }
+  return out
+}
 
 // Non-quiz activities run as their own step; quiz activities are expanded into
 // individual question steps and mixed through the lesson.
@@ -59,13 +79,13 @@ function buildSteps(items, lang, t) {
   for (const it of items) {
     if (INTERLEAVE_IDS.has(it.id)) {
       const qs = quizQuestions(it, lang, t)
-      if (qs.length) quizLists.push(qs.map(q => ({ kind: 'q', id: it.id, level: it.level, question: q })))
+      if (qs.length) quizLists.push(qs.map(q => ({ kind: 'q', id: it.id, level: it.level, question: q, cat: 'Learning' })))
     } else {
-      others.push({ kind: 'activity', ...it })
+      others.push({ kind: 'activity', ...it, cat: CATEGORY_OF[it.id] || 'Other' })
     }
   }
-  const quizSteps = interleave(shuffle(quizLists))      // types alternate
-  return interleave(shuffle([quizSteps, shuffle(others)]))
+  const quizSteps = interleave(shuffle(quizLists))      // quiz types alternate
+  return spreadByCategory([...quizSteps, ...shuffle(others)])
 }
 
 export default function App() {
@@ -109,12 +129,12 @@ export default function App() {
 
   // Start a lesson by index (a tile tap), or the next one by default.
   function startLesson(lessonIdx) {
-    // After the first lesson, require a Google sign-in to continue.
-    if (!auth.user && auth.configured && progress.getLessonsCompleted() >= 1) {
+    const idx = typeof lessonIdx === 'number' ? lessonIdx : progress.getLessonsCompleted()
+    // Guests may only play lesson 1; any later lesson requires a Google sign-in.
+    if (!auth.user && auth.configured && idx >= 1) {
       setScreen('gate')
       return
     }
-    const idx = typeof lessonIdx === 'number' ? lessonIdx : progress.getLessonsCompleted()
     const built = progress.buildNextLesson(idx)
     if (!built.length) { setScreen('dashboard'); return }
     const info = lessonInfo(idx)
@@ -227,6 +247,7 @@ export default function App() {
         results={lessonResults}
         lessonNumber={lessonNumber}
         onNext={startLesson}
+        onRetry={() => startLesson(playedLessonIndex)}
         onDone={exitLesson}
       />
     )

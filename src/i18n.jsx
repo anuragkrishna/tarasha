@@ -34,6 +34,7 @@ const STRINGS = {
     startLabel: 'Start',
     showAllLessons: 'Show all lessons ({n} more)',
     showFewerLessons: 'Show fewer',
+    retry: 'Retry this lesson',
     startLessonN: 'Start Lesson {n}',
 
     // Profile / account
@@ -49,8 +50,8 @@ const STRINGS = {
 
     // Landing page
     landingEyebrow: 'Tarasha',
-    landingHeadline: 'Rebuild memory, focus, and clear thinking',
-    landingSub: 'Short exercises to keep your mind sharp, at your own pace.',
+    landingHeadline: 'Keep your mind in motion',
+    landingSub: 'Short, friendly exercises for memory, focus, and clear thinking — at your own pace.',
     landingSignIn: 'Sign in with Google',
     landingGuest: 'Start now — no sign-up needed',
     landingPillarMemory: 'Memory',
@@ -371,6 +372,7 @@ const STRINGS = {
     startLabel: 'शुरू',
     showAllLessons: 'सभी पाठ देखें ({n} और)',
     showFewerLessons: 'कम दिखाएँ',
+    retry: 'यह पाठ फिर से करें',
     startLessonN: 'पाठ {n} शुरू करें',
 
     account: 'खाता',
@@ -384,13 +386,13 @@ const STRINGS = {
     textSizeLabel: 'अक्षर का आकार',
 
     landingEyebrow: 'तराशा',
-    landingHeadline: 'याददाश्त, ध्यान और साफ़ सोच फिर से बनाएँ',
-    landingSub: 'दिमाग़ को तेज़ रखने के छोटे अभ्यास, अपनी गति से।',
-    landingSignIn: 'Google से साइन इन करें',
-    landingGuest: 'अभी शुरू करें — साइन-अप की ज़रूरत नहीं',
+    landingHeadline: 'दिमाग़ को active रखें',
+    landingSub: 'याददाश्त, focus और सोच के लिए छोटे, आसान exercises — अपने हिसाब से।',
+    landingSignIn: 'Google से login करें',
+    landingGuest: 'अभी शुरू करें — कोई sign-up नहीं',
     landingPillarMemory: 'याददाश्त',
     landingPillarLearning: 'सीखना',
-    landingPillarInhibition: 'आत्म-नियंत्रण',
+    landingPillarInhibition: 'कंट्रोल',
     landingPillarFocus: 'ध्यान',
     landingNoAuth: 'साइन-इन तैयार किया जा रहा है — आप नीचे से अभी शुरू कर सकते हैं।',
     landingFootnote: 'प्रोग्रेस सेव करने और किसी भी डिवाइस पर जारी रखने के लिए साइन इन करें।',

@@ -6,9 +6,9 @@ import { ACTIVITIES } from './data/activities'
 // row as they like. The first few lessons follow a fixed difficulty ladder; after
 // that, each new lesson adapts to past performance and the previous lesson.
 
-export const MIN_ACTIVITIES = 5      // always at least this many
-export const TIME_BUDGET_MIN = 10    // keep adding past the minimum until ~10 min
-export const MAX_ACTIVITIES = 9      // hard safety cap
+export const MIN_ACTIVITIES = 7      // always at least this many
+export const TIME_BUDGET_MIN = 14    // keep adding past the minimum until ~14 min
+export const MAX_ACTIVITIES = 11     // hard safety cap
 export const MAX_PER_PILLAR = 2      // never more than this many of one type per lesson
 export const DEFAULT_DURATION = 2    // estimated minutes for an activity
 
@@ -53,16 +53,16 @@ function shuffle(arr) {
 // Each is a balanced mix (all 4 pillars represented, max 2 per pillar) run at a
 // fixed level. Levels ramp 1 → 2 → 3 across the ten lessons.
 export const PREBUILT = [
-  { level: 1, ids: ['odd-one-out', 'categorisation', 'memory-numbers', 'clap-when', 'drawing-lines', 'describe-picture'] },
-  { level: 1, ids: ['reverse-counting', 'copy-text', 'items-recall', 'clap-when', 'story-narration'] },
-  { level: 1, ids: ['weights-concept', 'money-transaction', 'sentence-repeat', 'drawing-lines', 'describe-picture'] },
-  { level: 2, ids: ['cause-effect', 'cooking-plan', 'daily-events-recall', 'breath-count', 'story-narration'] },
-  { level: 2, ids: ['odd-one-out', 'weights-concept', 'picture-story', 'drawing-lines', 'describe-picture'] },
-  { level: 2, ids: ['categorisation', 'reverse-counting', 'delayed-recall', 'breath-count', 'story-narration'] },
-  { level: 3, ids: ['money-transaction', 'cause-effect', 'memory-numbers', 'drawing-lines', 'describe-picture'] },
-  { level: 3, ids: ['copy-text', 'cooking-plan', 'items-recall', 'breath-count', 'story-narration'] },
-  { level: 3, ids: ['odd-one-out', 'categorisation', 'sentence-repeat', 'drawing-lines', 'describe-picture'] },
-  { level: 3, ids: ['weights-concept', 'cause-effect', 'delayed-recall', 'breath-count', 'story-narration'] },
+  { level: 1, ids: ['odd-one-out', 'categorisation', 'memory-numbers', 'clap-when', 'drawing-lines', 'describe-picture', 'copy-text'] },
+  { level: 1, ids: ['weights-concept', 'money-transaction', 'items-recall', 'reverse-counting', 'story-narration', 'breath-count', 'clap-when'] },
+  { level: 1, ids: ['odd-one-out', 'categorisation', 'sentence-repeat', 'copy-text', 'picture-story', 'drawing-lines', 'describe-picture'] },
+  { level: 2, ids: ['weights-concept', 'money-transaction', 'cause-effect', 'memory-numbers', 'daily-events-recall', 'breath-count', 'clap-when'] },
+  { level: 2, ids: ['odd-one-out', 'categorisation', 'cooking-plan', 'items-recall', 'story-narration', 'drawing-lines', 'describe-picture'] },
+  { level: 2, ids: ['weights-concept', 'money-transaction', 'reverse-counting', 'delayed-recall', 'picture-story', 'breath-count', 'clap-when'] },
+  { level: 3, ids: ['odd-one-out', 'money-transaction', 'cause-effect', 'memory-numbers', 'sentence-repeat', 'drawing-lines', 'describe-picture'] },
+  { level: 3, ids: ['weights-concept', 'categorisation', 'copy-text', 'items-recall', 'daily-events-recall', 'breath-count', 'clap-when'] },
+  { level: 3, ids: ['odd-one-out', 'money-transaction', 'cooking-plan', 'sentence-repeat', 'picture-story', 'drawing-lines', 'describe-picture'] },
+  { level: 3, ids: ['weights-concept', 'categorisation', 'cause-effect', 'delayed-recall', 'story-narration', 'breath-count', 'clap-when'] },
 ]
 
 export const PREBUILT_COUNT = PREBUILT.length
