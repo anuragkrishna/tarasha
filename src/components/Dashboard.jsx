@@ -1,13 +1,14 @@
 import { useLang } from '../i18n'
 import { PREBUILT, PREBUILT_COUNT } from '../lessons'
 import ProfileMenu from './ProfileMenu'
+import Icon from './Icon'
 
 // Skill pillars (= activity categories) a lesson mixes across.
 const PILLARS = [
-  { key: 'Learning', icon: '🧠' },
-  { key: 'Short Term Memory', icon: '🧩' },
-  { key: 'Topic Maintenance', icon: '🎯' },
-  { key: 'Narration', icon: '💬' },
+  { key: 'Learning', icon: 'brain' },
+  { key: 'Short Term Memory', icon: 'puzzle' },
+  { key: 'Topic Maintenance', icon: 'target' },
+  { key: 'Narration', icon: 'chat' },
 ]
 
 function PillarChips() {
@@ -20,10 +21,10 @@ function PillarChips() {
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             background: 'var(--accent-soft)', borderRadius: 999,
-            padding: '6px 12px', fontSize: 13, fontWeight: 600, color: 'var(--text-muted)'
+            padding: '6px 12px', fontSize: 13, fontWeight: 600, color: 'var(--text)'
           }}
         >
-          <span>{p.icon}</span>{t('cat.' + p.key)}
+          <Icon name={p.icon} size={16} color="var(--primary-strong)" />{t('cat.' + p.key)}
         </span>
       ))}
     </div>
@@ -34,10 +35,11 @@ function DifficultyChip({ level }) {
   const { t } = useLang()
   return (
     <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 5,
       background: 'var(--primary)', color: 'var(--on-primary)', borderRadius: 999,
-      padding: '3px 10px', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap'
+      padding: '4px 10px', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap'
     }}>
-      🎓 {level ? t('lvl.' + level) : t('adaptive')}
+      <Icon name="cap" size={14} /> {level ? t('lvl.' + level) : t('adaptive')}
     </span>
   )
 }
@@ -47,8 +49,8 @@ function LessonTile({ n, level, status, count, onStart }) {
   const { t } = useLang()
   const isCurrent = status === 'current'
   const locked = status === 'upcoming'
-  const icon = status === 'done' ? '✓' : status === 'current' ? '▶' : '🔒'
-  const iconColor = status === 'done' ? 'var(--success)' : status === 'current' ? 'var(--primary)' : 'var(--border)'
+  const iconName = status === 'done' ? 'check' : status === 'current' ? 'play' : 'lock'
+  const iconColor = status === 'done' ? 'var(--success)' : status === 'current' ? 'var(--primary)' : 'var(--muted)'
 
   return (
     <div
@@ -57,7 +59,7 @@ function LessonTile({ n, level, status, count, onStart }) {
         display: 'flex', flexDirection: 'column', gap: 10,
         padding: 16,
         cursor: locked ? 'default' : 'pointer',
-        opacity: locked ? 0.55 : 1,
+        opacity: locked ? 0.7 : 1,
         background: isCurrent ? 'rgba(197,97,60,0.08)' : 'var(--surface)',
         borderRadius: 14,
         border: isCurrent ? '2px solid var(--primary)' : '2px solid var(--border)',
@@ -66,16 +68,20 @@ function LessonTile({ n, level, status, count, onStart }) {
     >
       <div className="flex items-center justify-between">
         <span style={{
-          width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+          width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 15, fontWeight: 800, color: iconColor,
-          border: `2px solid ${iconColor}`,
-        }}>{icon}</span>
+          color: iconColor, border: `2px solid ${iconColor}`,
+          background: isCurrent ? 'var(--primary)' : 'transparent',
+        }}>
+          <Icon name={iconName} size={17} color={isCurrent ? 'var(--on-primary)' : iconColor} />
+        </span>
         <DifficultyChip level={level} />
       </div>
       <div>
         <div style={{ fontSize: 17, fontWeight: 700 }}>{t('lessonN', { n })}</div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{t('lessonItems', { n: count })}</div>
+        {locked && <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--muted)', marginTop: 2 }}>{t('locked')}</div>}
+        {isCurrent && <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary-strong)', marginTop: 2 }}>{t('startLabel')}</div>}
       </div>
     </div>
   )
@@ -122,7 +128,7 @@ function Curriculum({ progress, onStartLesson }) {
               <div style={{ fontSize: 15, color: 'var(--text-muted)', marginTop: 2 }}>{t('lessonSubtitle')}</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-              <div style={{ fontSize: 28 }}>📚</div>
+              <Icon name="brain" size={28} color="var(--primary-strong)" />
               <DifficultyChip level={info.level} />
             </div>
           </div>

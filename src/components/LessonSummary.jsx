@@ -1,5 +1,6 @@
 import { getActivity } from '../data/activities'
 import { useLang, pickField } from '../i18n'
+import Icon from './Icon'
 
 function scorePct(score, total) {
   return total > 0 ? Math.round((score / total) * 100) : null
@@ -23,7 +24,7 @@ export default function LessonSummary({ results, lessonNumber, onNext, onDone })
   return (
     <div className="page" style={{ maxWidth: 560, margin: '0 auto' }}>
       <div className="complete-screen" style={{ minHeight: 'auto', paddingTop: 24 }}>
-        <div style={{ fontSize: 60 }}>🎉</div>
+        <Icon name="celebrate" size={56} color="var(--primary)" style={{ margin: '0 auto' }} />
         <h2>{t('lessonComplete', { n: lessonNumber })}</h2>
         {avg !== null && (
           <div className="score-circle" style={{ width: 120, height: 120, fontSize: 34 }}>

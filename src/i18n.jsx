@@ -30,6 +30,8 @@ const STRINGS = {
     adaptive: 'Adaptive',
     curriculumTitle: 'Your lessons',
     lessonItems: '{n} activities • ~10 min',
+    locked: 'Locked',
+    startLabel: 'Start',
     startLessonN: 'Start Lesson {n}',
 
     // Profile / account
@@ -351,6 +353,8 @@ const STRINGS = {
     adaptive: 'अपने हिसाब से',
     curriculumTitle: 'आपके पाठ',
     lessonItems: '{n} काम • ~10 मिनट',
+    locked: 'बंद',
+    startLabel: 'शुरू',
     startLessonN: 'पाठ {n} शुरू करें',
 
     account: 'खाता',

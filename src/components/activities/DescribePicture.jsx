@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { getActivityLevel, getLadderContent, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
+import Icon from '../Icon'
 
 export default function DescribePicture({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
@@ -61,9 +62,10 @@ export default function DescribePicture({ activityId, level, exposure = 0, onDon
             <div className="flex gap-8 wrap mb-16">
               {scene.hints.map((h, i) => (
                 <span key={i} style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
                   padding: '6px 12px', borderRadius: 16, fontSize: 14, fontWeight: 600,
-                  background: 'var(--bg)', color: 'var(--text-muted)', border: '1px solid var(--border)'
-                }}>💡 {h}</span>
+                  background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)'
+                }}><Icon name="hint" size={14} color="var(--primary-strong)" /> {h}</span>
               ))}
             </div>
           )}

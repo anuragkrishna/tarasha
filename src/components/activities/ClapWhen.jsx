@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { getActivityLevel, getLadderContent, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
+import Icon from '../Icon'
 
 const MAX_STRIKES = 3
 const WINDOW_MS = 1800   // listening window after each word (generous, slow pace)
@@ -201,7 +202,7 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
       <div className="page">
         <Header t={t} activity={activity} lang={lang} level={levelData?.level || level} onBack={onBack} />
         <div className="card text-center">
-          <div style={{ fontSize: 64, marginBottom: 12 }}>👏</div>
+          <Icon name="clap" size={64} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
           <p style={{ fontSize: 19, lineHeight: 1.6, marginBottom: 20 }}>
             {t('clapIntro', { n: MAX_STRIKES })}
           </p>
@@ -223,12 +224,12 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
               <div style={{ fontSize: 40, fontWeight: 800, margin: '8px 0 24px' }}>{target}</div>
             </>
           )}
-          <div style={{ fontSize: 56, marginBottom: 12 }}>🔊</div>
+          <Icon name="speaker" size={52} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
           <p style={{ fontSize: 20, fontWeight: 600 }}>{status || t('clapGetReady')}</p>
           {usedMic && (
             <div className="flex gap-8" style={{ justifyContent: 'center', marginTop: 20 }}>
               {Array.from({ length: MAX_STRIKES }).map((_, i) => (
-                <span key={i} style={{ fontSize: 26, opacity: i < strikes ? 1 : 0.25 }}>❌</span>
+                <Icon key={i} name="x" size={26} color="var(--error)" style={{ opacity: i < strikes ? 1 : 0.25 }} />
               ))}
             </div>
           )}
@@ -242,12 +243,12 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
     <div className="page">
       <Header t={t} activity={activity} lang={lang} level={levelData?.level || level} onBack={onBack} />
       <div className="card text-center">
-        <div style={{ fontSize: 60, marginBottom: 8 }}>{autoPass ? '🎉' : '💪'}</div>
+        <Icon name={autoPass ? 'celebrate' : 'clap'} size={56} color="var(--primary)" style={{ margin: '0 auto 8px' }} />
         <h2 style={{ marginBottom: 12 }}>{autoPass ? t('clapPassed') : t('clapFailed')}</h2>
         {usedMic && (
           <div className="flex gap-8 wrap" style={{ justifyContent: 'center', marginBottom: 16 }}>
-            <span style={chip}>✅ {t('clapHits', { n: hits })}</span>
-            <span style={chip}>❌ {t('clapStrikes', { n: strikes })}</span>
+            <span style={chip}><Icon name="check" size={16} color="var(--success)" /> {t('clapHits', { n: hits })}</span>
+            <span style={chip}><Icon name="x" size={16} color="var(--error)" /> {t('clapStrikes', { n: strikes })}</span>
           </div>
         )}
         <p style={{ fontWeight: 700, color: 'var(--text-muted)', marginBottom: 12 }}>
@@ -267,8 +268,9 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
 }
 
 const chip = {
+  display: 'inline-flex', alignItems: 'center', gap: 6,
   padding: '6px 12px', borderRadius: 16, fontSize: 15, fontWeight: 600,
-  background: 'var(--bg)', color: 'var(--text-muted)', border: '1px solid var(--border)'
+  background: 'var(--bg)', color: 'var(--text)', border: '1px solid var(--border)'
 }
 
 function Header({ t, activity, lang, level, onBack }) {
