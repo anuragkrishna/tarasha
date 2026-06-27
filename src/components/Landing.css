@@ -22,6 +22,7 @@
   font-family: var(--lp-body);
   -webkit-font-smoothing: antialiased;
   display: flex;
+  align-items: flex-start;     /* don't stretch the stage to full height (that broke scrolling) */
   justify-content: center;
   padding: 28px 24px;
 }
