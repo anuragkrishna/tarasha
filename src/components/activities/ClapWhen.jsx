@@ -36,19 +36,22 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
   const levelData = getLadderContent(activityId, exposure, lang, 1) || getActivityLevel(activityId, level, lang)
   const rounds = levelData?.rounds || []
 
-  const [phase, setPhase] = useState('intro')      // intro | manual | running | result
+  const [phase, setPhase] = useState('intro')      // intro | running | result
+  const [mode, setMode] = useState('tap')           // tap (default, accessible) | clap (mic)
+  const [tapActive, setTapActive] = useState(true)  // is the current run using taps?
   const [status, setStatus] = useState('')          // sub-status text while running
   const [target, setTarget] = useState('')
   const [strikes, setStrikes] = useState(0)
   const [hits, setHits] = useState(0)
   const [autoPass, setAutoPass] = useState(true)
-  const [usedMic, setUsedMic] = useState(true)
 
   // Audio + detection state kept in refs so the rAF loop sees live values.
   const streamRef = useRef(null)
   const ctxRef = useRef(null)
   const rafRef = useRef(null)
   const listenRef = useRef({ open: false, clap: false, voice: false })
+  const tapRef = useRef(false)        // did the user tap during the open window?
+  const windowOpenRef = useRef(false) // taps only count while a window is open
   const cancelledRef = useRef(false)
   const threshRef = useRef({ voice: 0.05, clap: 0.14 })
 
@@ -123,26 +126,36 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
     rafRef.current = requestAnimationFrame(tick)
   }
 
-  async function begin() {
-    cancelledRef.current = false
-    let mic = true
-    try {
-      if (!navigator.mediaDevices?.getUserMedia) throw new Error('no-mic')
-      await startMic()
-    } catch {
-      mic = false
-    }
-    setUsedMic(mic)
-    setPhase('running')
-    await runRounds(mic)
+  // Record a tap (only counts inside an open listening window).
+  function tapped() {
+    if (windowOpenRef.current) tapRef.current = true
   }
 
-  async function runRounds(mic) {
+  async function begin() {
+    cancelledRef.current = false
+    // Tap mode needs no mic. Clap mode tries the mic; if it fails, fall back to tap.
+    let responder = 'tap'
+    if (mode === 'clap') {
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error('no-mic')
+        await startMic()
+        responder = 'mic'
+      } catch {
+        responder = 'tap'
+      }
+    }
+    setTapActive(responder === 'tap')
+    setPhase('running')
+    await runRounds(responder)
+  }
+
+  async function runRounds(responder) {
+    const isMic = responder === 'mic'
     let localStrikes = 0
     let localHits = 0
     let failed = false
 
-    if (mic) {
+    if (isMic) {
       setStatus(t('clapCalibrating'))
       await sleep(1500) // let the detector measure the noise floor
     }
@@ -159,31 +172,40 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
         if (cancelledRef.current) return
         setStatus(t('clapListening'))
         await speak(word, lang)
-        // Open the listening window just after the word is spoken.
-        listenRef.current = { open: true, clap: false, voice: false }
+        // Open the response window just after the word is spoken.
+        if (isMic) {
+          listenRef.current = { open: true, clap: false, voice: false }
+        } else {
+          tapRef.current = false
+          windowOpenRef.current = true
+        }
         await sleep(WINDOW_MS)
-        listenRef.current.open = false
-        const { clap, voice } = listenRef.current
+        let responded, voice = false
+        if (isMic) {
+          listenRef.current.open = false
+          responded = listenRef.current.clap
+          voice = listenRef.current.voice
+        } else {
+          windowOpenRef.current = false
+          responded = tapRef.current
+        }
         const isTarget = word === tgt
 
-        if (mic) {
-          if (isTarget) {
-            if (clap) localHits++
-            else localStrikes++          // missed the target
-          } else if (clap || voice) {
-            localStrikes++               // should have stayed quiet
-          }
-          setHits(localHits)
-          setStrikes(localStrikes)
-          if (localStrikes >= MAX_STRIKES) { failed = true; break }
+        if (isTarget) {
+          if (responded) localHits++
+          else localStrikes++            // missed the target
+        } else if (responded || voice) {
+          localStrikes++                 // should have stayed still/quiet
         }
+        setHits(localHits)
+        setStrikes(localStrikes)
+        if (localStrikes >= MAX_STRIKES) { failed = true; break }
         await sleep(700)
       }
       if (failed) break
     }
 
-    const passed = mic ? !failed : true
-    setAutoPass(passed)
+    setAutoPass(!failed)
     setHits(localHits)
     setStrikes(localStrikes)
     cleanup()
@@ -204,10 +226,19 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
         <div className="card text-center">
           <Icon name="clap" size={64} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
           <p style={{ fontSize: 19, lineHeight: 1.6, marginBottom: 20 }}>
-            {t('clapIntro', { n: MAX_STRIKES })}
+            {mode === 'tap' ? t('clapIntroTap', { n: MAX_STRIKES }) : t('clapIntro', { n: MAX_STRIKES })}
           </p>
-          <p className="text-muted" style={{ fontSize: 15, marginBottom: 20 }}>{t('clapNeedMic')}</p>
+          {mode === 'clap' && (
+            <p className="text-muted" style={{ fontSize: 15, marginBottom: 20 }}>{t('clapNeedMic')}</p>
+          )}
           <button className="btn btn-primary btn-lg w-full" onClick={begin}>{t('clapStart')}</button>
+          <button
+            className="btn btn-ghost w-full"
+            style={{ marginTop: 10 }}
+            onClick={() => setMode(mode === 'tap' ? 'clap' : 'tap')}
+          >
+            {mode === 'tap' ? t('clapSwitchToClap') : t('clapSwitchToTap')}
+          </button>
         </div>
       </div>
     )
@@ -226,14 +257,28 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
           )}
           <Icon name="speaker" size={52} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
           <p style={{ fontSize: 20, fontWeight: 600 }}>{status || t('clapGetReady')}</p>
-          {usedMic && (
-            <div className="flex gap-8" style={{ justifyContent: 'center', marginTop: 20 }}>
-              {Array.from({ length: MAX_STRIKES }).map((_, i) => (
-                <Icon key={i} name="x" size={26} color="var(--error)" style={{ opacity: i < strikes ? 1 : 0.25 }} />
-              ))}
-            </div>
-          )}
+          <div className="flex gap-8" style={{ justifyContent: 'center', marginTop: 20 }}>
+            {Array.from({ length: MAX_STRIKES }).map((_, i) => (
+              <Icon key={i} name="x" size={26} color="var(--error)" style={{ opacity: i < strikes ? 1 : 0.25 }} />
+            ))}
+          </div>
         </div>
+
+        {/* Tap mode: a big, motor-friendly response button. */}
+        {tapActive && (
+          <button
+            onClick={tapped}
+            style={{
+              width: '100%', marginTop: 20, minHeight: 120, borderRadius: 20,
+              background: 'var(--primary)', color: 'var(--on-primary)', border: 'none',
+              fontFamily: "'Fraunces', serif", fontSize: 30, fontWeight: 700, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+              boxShadow: '0 6px 18px var(--primary-glow)',
+            }}
+          >
+            <Icon name="clap" size={34} color="var(--on-primary)" /> {t('clapTapBtn')}
+          </button>
+        )}
       </div>
     )
   }
@@ -245,14 +290,12 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
       <div className="card text-center">
         <Icon name={autoPass ? 'celebrate' : 'clap'} size={56} color="var(--primary)" style={{ margin: '0 auto 8px' }} />
         <h2 style={{ marginBottom: 12 }}>{autoPass ? t('clapPassed') : t('clapFailed')}</h2>
-        {usedMic && (
-          <div className="flex gap-8 wrap" style={{ justifyContent: 'center', marginBottom: 16 }}>
-            <span style={chip}><Icon name="check" size={16} color="var(--success)" /> {t('clapHits', { n: hits })}</span>
-            <span style={chip}><Icon name="x" size={16} color="var(--error)" /> {t('clapStrikes', { n: strikes })}</span>
-          </div>
-        )}
+        <div className="flex gap-8 wrap" style={{ justifyContent: 'center', marginBottom: 16 }}>
+          <span style={chip}><Icon name="check" size={16} color="var(--success)" /> {t('clapHits', { n: hits })}</span>
+          <span style={chip}><Icon name="x" size={16} color="var(--error)" /> {t('clapStrikes', { n: strikes })}</span>
+        </div>
         <p style={{ fontWeight: 700, color: 'var(--text-muted)', marginBottom: 12 }}>
-          {usedMic ? t('clapConfirm') : t('clapManualPrompt')}
+          {t('clapConfirm')}
         </p>
         <div className="flex gap-12">
           <button className={`btn w-full ${autoPass ? 'btn-success' : 'btn-ghost'}`} onClick={() => finish(true)}>

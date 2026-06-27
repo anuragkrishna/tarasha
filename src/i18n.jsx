@@ -201,6 +201,8 @@ const STRINGS = {
     whatSheSaid: 'Your answer:',
     caregiverHowNarration: 'Caregiver: How was the narration?',
     caregiverHowDescription: 'Caregiver: How was the description?',
+    describeSpeak: 'Speak your answer',
+    describeListening: 'Listening… tap to stop',
     writeDescription: 'Type your answer here...',
     sentencesTarget: 'Try to describe it in {n} sentences.',
     sentenceTarget: 'Try to describe it in {n} sentence.',
@@ -228,6 +230,10 @@ const STRINGS = {
 
     // Clap on the word
     clapIntro: 'You will hear some words. Clap ONLY when you hear the chosen word. Stay quiet for every other word. {n} mistakes and the round ends.',
+    clapIntroTap: 'You will hear some words. Tap the big button ONLY when you hear the chosen word. Stay still for every other word. {n} mistakes and the round ends.',
+    clapTapBtn: 'Tap',
+    clapSwitchToClap: 'Use clapping instead (needs microphone)',
+    clapSwitchToTap: 'Use tapping instead',
     clapNeedMic: 'This activity listens with the microphone. Please allow microphone access.',
     clapMicDenied: 'Microphone not available. A caregiver can score this by watching instead.',
     clapStart: 'Start',
@@ -506,6 +512,8 @@ const STRINGS = {
     whatSheSaid: 'आपका जवाब:',
     caregiverHowNarration: 'आप बताएँ: कहानी कैसी सुनाई?',
     caregiverHowDescription: 'आप बताएँ: कैसा बताया?',
+    describeSpeak: 'बोलकर जवाब दें',
+    describeListening: 'सुन रहे हैं… रोकने के लिए दबाएँ',
     writeDescription: 'अपना जवाब यहाँ लिखें...',
     sentencesTarget: 'इसे {n} वाक्यों में बताने की कोशिश करें।',
     sentenceTarget: 'इसे {n} वाक्य में बताने की कोशिश करें।',
@@ -531,6 +539,10 @@ const STRINGS = {
 
     // Clap on the word
     clapIntro: 'आप कुछ शब्द सुनेंगे। सिर्फ़ चुने हुए शब्द पर ताली बजाएँ। बाकी हर शब्द पर चुप रहें। {n} ग़लतियों पर राउंड खत्म।',
+    clapIntroTap: 'आप कुछ शब्द सुनेंगे। सिर्फ़ चुने हुए शब्द पर बड़ा बटन दबाएँ। बाकी हर शब्द पर रुके रहें। {n} ग़लतियों पर राउंड खत्म।',
+    clapTapBtn: 'दबाएँ',
+    clapSwitchToClap: 'ताली से करें (माइक्रोफ़ोन चाहिए)',
+    clapSwitchToTap: 'दबाकर करें',
     clapNeedMic: 'यह गतिविधि माइक्रोफ़ोन से सुनती है। कृपया माइक्रोफ़ोन की अनुमति दें।',
     clapMicDenied: 'माइक्रोफ़ोन उपलब्ध नहीं है। देखभाल करने वाले देखकर अंक दे सकते हैं।',
     clapStart: 'शुरू करें',

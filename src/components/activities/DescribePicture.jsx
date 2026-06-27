@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { getActivityLevel, getLadderContent, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
 import Icon from '../Icon'
+
+const SpeechRec = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition)
 
 export default function DescribePicture({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
@@ -17,6 +19,26 @@ export default function DescribePicture({ activityId, level, exposure = 0, onDon
   const [answer, setAnswer] = useState('')
   const [score, setScore] = useState(0)
   const [done, setDone] = useState(false)
+  const [listening, setListening] = useState(false)
+  const recRef = useRef(null)
+
+  // Voice-to-text: dictate the answer (primary input); typing is the fallback.
+  function dictate() {
+    if (!SpeechRec) return
+    if (listening) { recRef.current?.stop(); return }
+    const r = new SpeechRec()
+    r.lang = lang === 'hi' ? 'hi-IN' : 'en-IN'
+    r.interimResults = false
+    r.onresult = (e) => {
+      const text = Array.from(e.results).map(x => x[0].transcript).join(' ')
+      setAnswer(a => (a ? a.trim() + ' ' : '') + text)
+    }
+    r.onend = () => setListening(false)
+    r.onerror = () => setListening(false)
+    recRef.current = r
+    setListening(true)
+    r.start()
+  }
 
   if (done) {
     queueMicrotask(() => onDone(score, 1))
@@ -69,13 +91,22 @@ export default function DescribePicture({ activityId, level, exposure = 0, onDon
               ))}
             </div>
           )}
+          {SpeechRec && (
+            <button
+              className="btn btn-ghost w-full mb-12"
+              onClick={dictate}
+              style={{ justifyContent: 'center', borderColor: listening ? 'var(--error)' : 'var(--primary)' }}
+            >
+              <Icon name="mic" size={22} color={listening ? 'var(--error)' : 'var(--primary-strong)'} />
+              {listening ? t('describeListening') : t('describeSpeak')}
+            </button>
+          )}
           <textarea
             className="textarea"
             rows={5}
             value={answer}
             onChange={e => setAnswer(e.target.value)}
             placeholder={t('writeDescription')}
-            autoFocus
           />
           <button
             className="btn btn-primary w-full mt-16"

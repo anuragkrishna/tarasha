@@ -64,7 +64,7 @@ export default function ProfileMenu({ user, configured, signIn, signOut, onViewL
         onClick={() => setOpen(o => !o)}
         title={t('account')}
         style={{
-          width: 44, height: 44, borderRadius: '50%', padding: 0, minHeight: 'unset', minWidth: 'unset',
+          width: 48, height: 48, borderRadius: '50%', padding: 0, minHeight: 'unset', minWidth: 'unset',
           border: '2px solid var(--border)', background: 'var(--surface)', cursor: 'pointer', overflow: 'hidden',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
