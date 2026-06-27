@@ -1049,67 +1049,30 @@ export const ACTIVITIES = [
     icon: '👏',
     description: 'Listen carefully and clap only when you hear the chosen word',
     description_hi: 'ध्यान से सुनें और सिर्फ़ चुने हुए शब्द पर ताली बजाएँ',
+    // Bilingual word pool — the round is generated at runtime (random target,
+    // random number of claps, random distractors) so each play differs.
+    words: [
+      { label: 'Apple', label_hi: 'सेब' },
+      { label: 'Mango', label_hi: 'आम' },
+      { label: 'Banana', label_hi: 'केला' },
+      { label: 'Chair', label_hi: 'कुर्सी' },
+      { label: 'Table', label_hi: 'मेज़' },
+      { label: 'Cup', label_hi: 'कप' },
+      { label: 'Pen', label_hi: 'कलम' },
+      { label: 'Dog', label_hi: 'कुत्ता' },
+      { label: 'Cat', label_hi: 'बिल्ली' },
+      { label: 'Sun', label_hi: 'सूरज' },
+      { label: 'Moon', label_hi: 'चाँद' },
+      { label: 'Book', label_hi: 'किताब' },
+      { label: 'Ball', label_hi: 'गेंद' },
+      { label: 'Tree', label_hi: 'पेड़' },
+      { label: 'Car', label_hi: 'गाड़ी' },
+      { label: 'Fish', label_hi: 'मछली' },
+    ],
     levels: [
-      {
-        level: 1,
-        rounds: [
-          {
-            target: 'Apple', target_hi: 'सेब',
-            words: ['Apple', 'Mango', 'Apple', 'Chair', 'Apple', 'Banana', 'Apple', 'Table', 'Cup', 'Apple', 'Pen'],
-            words_hi: ['सेब', 'आम', 'सेब', 'कुर्सी', 'सेब', 'केला', 'सेब', 'मेज़', 'कप', 'सेब', 'कलम'],
-          },
-          {
-            target: 'Dog', target_hi: 'कुत्ता',
-            words: ['Cat', 'Dog', 'Sun', 'Dog', 'Book', 'Dog', 'Cup', 'Dog', 'Moon', 'Dog', 'Ball'],
-            words_hi: ['बिल्ली', 'कुत्ता', 'सूरज', 'कुत्ता', 'किताब', 'कुत्ता', 'कप', 'कुत्ता', 'चाँद', 'कुत्ता', 'गेंद'],
-          },
-          {
-            target: 'Sun', target_hi: 'सूरज',
-            words: ['Moon', 'Sun', 'Tree', 'Sun', 'Car', 'Sun', 'Fish', 'Sun', 'Cup', 'Sun', 'Book'],
-            words_hi: ['चाँद', 'सूरज', 'पेड़', 'सूरज', 'गाड़ी', 'सूरज', 'मछली', 'सूरज', 'कप', 'सूरज', 'किताब'],
-          },
-        ]
-      },
-      {
-        level: 2,
-        rounds: [
-          {
-            target: 'Ball', target_hi: 'गेंद',
-            words: ['Cup', 'Ball', 'Book', 'Ball', 'Tree', 'Ball', 'Cup', 'Ball', 'Car', 'Ball', 'Moon', 'Ball', 'Pen'],
-            words_hi: ['कप', 'गेंद', 'किताब', 'गेंद', 'पेड़', 'गेंद', 'कप', 'गेंद', 'गाड़ी', 'गेंद', 'चाँद', 'गेंद', 'कलम'],
-          },
-          {
-            target: 'Cat', target_hi: 'बिल्ली',
-            words: ['Dog', 'Cat', 'Fish', 'Cat', 'Sun', 'Cat', 'Dog', 'Cat', 'Moon', 'Cat', 'Tree', 'Cat', 'Cup'],
-            words_hi: ['कुत्ता', 'बिल्ली', 'मछली', 'बिल्ली', 'सूरज', 'बिल्ली', 'कुत्ता', 'बिल्ली', 'चाँद', 'बिल्ली', 'पेड़', 'बिल्ली', 'कप'],
-          },
-          {
-            target: 'Book', target_hi: 'किताब',
-            words: ['Pen', 'Book', 'Cup', 'Book', 'Table', 'Book', 'Chair', 'Book', 'Ball', 'Book', 'Tree', 'Book', 'Sun'],
-            words_hi: ['कलम', 'किताब', 'कप', 'किताब', 'मेज़', 'किताब', 'कुर्सी', 'किताब', 'गेंद', 'किताब', 'पेड़', 'किताब', 'सूरज'],
-          },
-        ]
-      },
-      {
-        level: 3,
-        rounds: [
-          {
-            target: 'Tree', target_hi: 'पेड़',
-            words: ['Car', 'Tree', 'Fish', 'Tree', 'Moon', 'Tree', 'Cup', 'Tree', 'Book', 'Tree', 'Ball', 'Tree', 'Sun', 'Cat'],
-            words_hi: ['गाड़ी', 'पेड़', 'मछली', 'पेड़', 'चाँद', 'पेड़', 'कप', 'पेड़', 'किताब', 'पेड़', 'गेंद', 'पेड़', 'सूरज', 'बिल्ली'],
-          },
-          {
-            target: 'Fish', target_hi: 'मछली',
-            words: ['Tree', 'Fish', 'Cat', 'Fish', 'Cup', 'Fish', 'Dog', 'Fish', 'Moon', 'Fish', 'Car', 'Fish', 'Sun', 'Ball'],
-            words_hi: ['पेड़', 'मछली', 'बिल्ली', 'मछली', 'कप', 'मछली', 'कुत्ता', 'मछली', 'चाँद', 'मछली', 'गाड़ी', 'मछली', 'सूरज', 'गेंद'],
-          },
-          {
-            target: 'Moon', target_hi: 'चाँद',
-            words: ['Sun', 'Moon', 'Ball', 'Moon', 'Tree', 'Moon', 'Fish', 'Moon', 'Cup', 'Moon', 'Dog', 'Moon', 'Book', 'Cat'],
-            words_hi: ['सूरज', 'चाँद', 'गेंद', 'चाँद', 'पेड़', 'चाँद', 'मछली', 'चाँद', 'कप', 'चाँद', 'कुत्ता', 'चाँद', 'किताब', 'बिल्ली'],
-          },
-        ]
-      },
+      { level: 1 },
+      { level: 2 },
+      { level: 3 },
     ]
   },
 ]
@@ -1179,7 +1142,6 @@ const CONTENT_KEY = {
   'cooking-plan': 'recipes',
   'delayed-recall': 'rounds',
   'describe-picture': 'scenes',
-  'clap-when': 'rounds',
 }
 
 // Walk the full easy→hard question bank (all levels) and return a window of `n`

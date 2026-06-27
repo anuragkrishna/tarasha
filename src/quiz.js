@@ -49,8 +49,8 @@ export function quizQuestions(item, lang, t) {
       src: item.id, title, icon,
       subject: { emoji: it.emoji, label: it.label },
       prompt: t('whichGroup'),
-      layout: 'grid',
-      options: shuffle(cats.map(c => ({ label: c.label, emoji: c.emoji }))),
+      layout: 'list',
+      options: shuffle(cats.map(c => ({ label: c.label }))),
       answer: it.category,
     }))
   }

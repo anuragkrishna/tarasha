@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { getActivityLevel, getLadderContent, getActivity } from '../../data/activities'
+import { getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
 import Icon from '../Icon'
 
@@ -7,6 +7,53 @@ const MAX_STRIKES = 3
 const WINDOW_MS = 1800   // listening window after each word (generous, slow pace)
 const CLAP_MAX_MS = 180  // a clap is a short, sharp burst
 const VOICE_MIN_MS = 220 // sustained sound = talking, not a clap
+
+function shuffle(arr) {
+  const a = arr.slice()
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+// Build one randomized round from the word pool: a random target word, a random
+// number of "clap" occurrences, and varied distractors between them — so every
+// play is different and no two target words ever land next to each other.
+function buildRound(pool, lang) {
+  const words = (pool || []).map(w => pickField(w, 'label', lang)).filter(Boolean)
+  if (words.length < 4) return { target: words[0] || '', words: words }
+
+  const order = shuffle(words)
+  const target = order[0]
+  const distractorPool = order.slice(1)
+
+  const targetCount = 4 + Math.floor(Math.random() * 4)        // 4–7 claps (randomized)
+  const distractorCount = 9 + Math.floor(Math.random() * 5)    // 9–13 → ~13–20 words total
+
+  // A varied stream of distractors (no immediate repeats where possible).
+  const distractors = []
+  let prev = null
+  for (let i = 0; i < distractorCount; i++) {
+    let pick = distractorPool[Math.floor(Math.random() * distractorPool.length)]
+    if (distractorPool.length > 1 && pick === prev) {
+      pick = distractorPool[(distractorPool.indexOf(pick) + 1) % distractorPool.length]
+    }
+    distractors.push(pick)
+    prev = pick
+  }
+
+  // Drop the targets into distinct gaps between distractors → never adjacent.
+  const gaps = shuffle(Array.from({ length: distractors.length + 1 }, (_, i) => i))
+    .slice(0, Math.min(targetCount, distractors.length + 1))
+    .sort((a, b) => a - b)
+  const seq = []
+  for (let i = 0; i <= distractors.length; i++) {
+    if (gaps.includes(i)) seq.push(target)
+    if (i < distractors.length) seq.push(distractors[i])
+  }
+  return { target, words: seq }
+}
 
 // Speak text and resolve when finished (with a safety timeout in case the
 // browser never fires onend, which happens on some mobile browsers).
@@ -33,12 +80,15 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBack }) {
   const { t, lang } = useLang()
   const activity = getActivity(activityId, lang)
-  const levelData = getLadderContent(activityId, exposure, lang, 1) || getActivityLevel(activityId, level, lang)
-  const rounds = levelData?.rounds || []
+
+  // Generate the randomized round once and keep it stable across re-renders.
+  const roundRef = useRef(null)
+  if (!roundRef.current) roundRef.current = buildRound(activity?.words, lang)
+  const round = roundRef.current
 
   const [phase, setPhase] = useState('ready')   // ready | running | result
   const [status, setStatus] = useState('')
-  const [target, setTarget] = useState(rounds[0]?.target || '')
+  const [target, setTarget] = useState(round.target)
   const [strikes, setStrikes] = useState(0)
   const [hits, setHits] = useState(0)
   const [autoPass, setAutoPass] = useState(true)
@@ -149,46 +199,42 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
     cancelledRef.current = false
     let localStrikes = 0, localHits = 0, failed = false
 
-    for (const round of rounds) {
-      if (cancelledRef.current) return
-      const tgt = round.target
-      setTarget(tgt)
-      setStatus('')
-      setPhase('ready')
-      await waitForBegin()
-      if (cancelledRef.current) return
-      const isMic = micOkRef.current
-      setPhase('running')
-      if (isMic && !threshRef.current.calibrated) await sleep(1400)
+    const tgt = round.target
+    setTarget(tgt)
+    setStatus('')
+    setPhase('ready')
+    await waitForBegin()
+    if (cancelledRef.current) return
+    const isMic = micOkRef.current
+    setPhase('running')
+    if (isMic && !threshRef.current.calibrated) await sleep(1400)
 
-      for (const word of round.words) {
-        if (cancelledRef.current) return
-        // Open the window BEFORE speaking — people respond the instant they hear
-        // the word, not only after it finishes, so those taps must count too.
-        tapRef.current = false
-        listenRef.current = { clap: false, voice: false }
-        windowOpenRef.current = true
-        setStatus(t('clapPlaying'))
-        await speak(word, lang)
-        setStatus(t('clapListening'))
-        await sleep(WINDOW_MS)
-        windowOpenRef.current = false
-        const responded = tapRef.current || (isMic && listenRef.current.clap)
-        const voice = isMic && listenRef.current.voice
-        const isTarget = word === tgt
+    for (const word of round.words) {
+      if (cancelledRef.current) return
+      // Open the window BEFORE speaking — people respond the instant they hear
+      // the word, not only after it finishes, so those taps must count too.
+      tapRef.current = false
+      listenRef.current = { clap: false, voice: false }
+      windowOpenRef.current = true
+      setStatus(t('clapPlaying'))
+      await speak(word, lang)
+      setStatus(t('clapListening'))
+      await sleep(WINDOW_MS)
+      windowOpenRef.current = false
+      const responded = tapRef.current || (isMic && listenRef.current.clap)
+      const voice = isMic && listenRef.current.voice
+      const isTarget = word === tgt
 
-        if (isTarget) {
-          if (responded) localHits++
-          else localStrikes++
-        } else if (responded || voice) {
-          localStrikes++
-        }
-        setHits(localHits)
-        setStrikes(localStrikes)
-        if (localStrikes >= MAX_STRIKES) { failed = true; break }
-        await sleep(700)
+      if (isTarget) {
+        if (responded) localHits++
+        else localStrikes++
+      } else if (responded || voice) {
+        localStrikes++
       }
-      if (failed) break
+      setHits(localHits)
+      setStrikes(localStrikes)
+      if (localStrikes >= MAX_STRIKES) { failed = true; break }
+      await sleep(700)
     }
 
     setAutoPass(!failed)
@@ -205,7 +251,7 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
   if (phase === 'ready') {
     return (
       <div className="page">
-        <Header t={t} activity={activity} lang={lang} level={levelData?.level || level} onBack={() => { cleanup(); onBack() }} />
+        <Header t={t} activity={activity} lang={lang} level={level} onBack={() => { cleanup(); onBack() }} />
         <div className="card text-center" style={{ padding: '32px 24px' }}>
           <Icon name="clap" size={56} color="var(--primary)" style={{ margin: '0 auto 14px' }} />
           <p style={{ fontSize: 19, lineHeight: 1.6, marginBottom: 18 }}>{t('clapRule')}</p>
@@ -222,7 +268,7 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
   if (phase === 'running') {
     return (
       <div className="page">
-        <Header t={t} activity={activity} lang={lang} level={levelData?.level || level} onBack={() => { cleanup(); onBack() }} />
+        <Header t={t} activity={activity} lang={lang} level={level} onBack={() => { cleanup(); onBack() }} />
         <div className="card text-center" style={{ padding: '32px 24px' }}>
           <p className="text-muted" style={{ fontSize: 16, marginBottom: 16 }}>{t('clapRule')}</p>
           <div style={{ fontSize: 40, fontWeight: 800, margin: '4px 0 20px' }}>{target}</div>
@@ -262,7 +308,7 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
   // result — auto verdict + caregiver confirm/override.
   return (
     <div className="page">
-      <Header t={t} activity={activity} lang={lang} level={levelData?.level || level} onBack={onBack} />
+      <Header t={t} activity={activity} lang={lang} level={level} onBack={onBack} />
       <div className="card text-center">
         <Icon name={autoPass ? 'celebrate' : 'clap'} size={56} color="var(--primary)" style={{ margin: '0 auto 8px' }} />
         <h2 style={{ marginBottom: 12 }}>{autoPass ? t('clapPassed') : t('clapFailed')}</h2>
