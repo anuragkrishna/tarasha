@@ -210,6 +210,11 @@ export default function App() {
   }
 
   if (!isAppRoute) {
+    // While auth is resolving, hold a blank warm screen so a signed-in user goes
+    // straight to /app without flashing the landing page first.
+    if (auth.configured && !auth.ready) {
+      return <div style={{ minHeight: '100vh', background: 'var(--bg)' }} />
+    }
     return (
       <Landing
         configured={auth.configured}
