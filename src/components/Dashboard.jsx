@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useLang } from '../i18n'
 import { PREBUILT, PREBUILT_COUNT } from '../lessons'
 import ProfileMenu from './ProfileMenu'
@@ -89,8 +90,14 @@ function LessonTile({ n, level, status, count, onStart }) {
 
 function Curriculum({ progress, onStartLesson }) {
   const { t } = useLang()
+  const [showAll, setShowAll] = useState(false)
   const completed = progress.getLessonsCompleted()
   const info = progress.getNextLessonInfo()
+
+  // Only reveal the next lesson or two — don't show a wall of padlocks.
+  const visibleCount = showAll ? PREBUILT.length : Math.min(PREBUILT.length, completed + 2)
+  const shown = PREBUILT.slice(0, visibleCount)
+  const hiddenCount = PREBUILT.length - visibleCount
 
   return (
     <>
@@ -99,7 +106,7 @@ function Curriculum({ progress, onStartLesson }) {
           {t('curriculumTitle')}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          {PREBUILT.map((plan, i) => {
+          {shown.map((plan, i) => {
             const status = i < completed ? 'done' : i === completed ? 'current' : 'upcoming'
             return (
               <LessonTile
@@ -113,6 +120,15 @@ function Curriculum({ progress, onStartLesson }) {
             )
           })}
         </div>
+        {(hiddenCount > 0 || showAll) && (
+          <button
+            className="btn btn-ghost w-full"
+            style={{ marginTop: 12 }}
+            onClick={() => setShowAll(s => !s)}
+          >
+            {showAll ? t('showFewerLessons') : t('showAllLessons', { n: hiddenCount })}
+          </button>
+        )}
       </div>
 
       {/* Once the curriculum is done, every further lesson is adaptive — tap to start. */}

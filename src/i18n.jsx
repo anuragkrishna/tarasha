@@ -32,6 +32,8 @@ const STRINGS = {
     lessonItems: '{n} activities • ~10 min',
     locked: 'Locked',
     startLabel: 'Start',
+    showAllLessons: 'Show all lessons ({n} more)',
+    showFewerLessons: 'Show fewer',
     startLessonN: 'Start Lesson {n}',
 
     // Profile / account
@@ -43,6 +45,7 @@ const STRINGS = {
     continueBtn: 'Continue',
     signOut: 'Sign out',
     languageLabel: 'Language',
+    textSizeLabel: 'Text size',
 
     // Landing page
     landingEyebrow: 'Tarasha',
@@ -234,6 +237,10 @@ const STRINGS = {
     clapTapBtn: 'Tap',
     clapSwitchToClap: 'Use clapping instead (needs microphone)',
     clapSwitchToTap: 'Use tapping instead',
+    clapTapTargetIs: 'Tap when you hear:',
+    clapReplay: 'Hear it again',
+    clapBegin: 'Begin',
+    clapPlaying: 'Playing…',
     clapNeedMic: 'This activity listens with the microphone. Please allow microphone access.',
     clapMicDenied: 'Microphone not available. A caregiver can score this by watching instead.',
     clapStart: 'Start',
@@ -361,6 +368,8 @@ const STRINGS = {
     lessonItems: '{n} काम • ~10 मिनट',
     locked: 'बंद',
     startLabel: 'शुरू',
+    showAllLessons: 'सभी पाठ देखें ({n} और)',
+    showFewerLessons: 'कम दिखाएँ',
     startLessonN: 'पाठ {n} शुरू करें',
 
     account: 'खाता',
@@ -371,6 +380,7 @@ const STRINGS = {
     continueBtn: 'जारी रखें',
     signOut: 'साइन आउट',
     languageLabel: 'भाषा',
+    textSizeLabel: 'अक्षर का आकार',
 
     landingEyebrow: 'तराशा',
     landingHeadline: 'याददाश्त, ध्यान और साफ़ सोच फिर से बनाएँ',
@@ -543,6 +553,10 @@ const STRINGS = {
     clapTapBtn: 'दबाएँ',
     clapSwitchToClap: 'ताली से करें (माइक्रोफ़ोन चाहिए)',
     clapSwitchToTap: 'दबाकर करें',
+    clapTapTargetIs: 'इस शब्द पर दबाएँ:',
+    clapReplay: 'फिर से सुनें',
+    clapBegin: 'शुरू करें',
+    clapPlaying: 'चल रहा है…',
     clapNeedMic: 'यह गतिविधि माइक्रोफ़ोन से सुनती है। कृपया माइक्रोफ़ोन की अनुमति दें।',
     clapMicDenied: 'माइक्रोफ़ोन उपलब्ध नहीं है। देखभाल करने वाले देखकर अंक दे सकते हैं।',
     clapStart: 'शुरू करें',

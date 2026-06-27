@@ -126,10 +126,18 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
     rafRef.current = requestAnimationFrame(tick)
   }
 
+  const targetLabel = mode === 'tap' ? t('clapTapTargetIs') : t('clapTargetIs')
+
   // Record a tap (only counts inside an open listening window).
   function tapped() {
     if (windowOpenRef.current) tapRef.current = true
   }
+
+  // Per-round "ready" gate: the user can replay the target, then taps Begin.
+  const beginResolveRef = useRef(null)
+  function waitForBegin() { return new Promise(res => { beginResolveRef.current = res }) }
+  function onBeginRound() { const r = beginResolveRef.current; beginResolveRef.current = null; r && r() }
+  function replayTarget() { speak(`${targetLabel} ${target}`, lang) }
 
   async function begin() {
     cancelledRef.current = false
@@ -145,7 +153,6 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
       }
     }
     setTapActive(responder === 'tap')
-    setPhase('running')
     await runRounds(responder)
   }
 
@@ -155,18 +162,18 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
     let localHits = 0
     let failed = false
 
-    if (isMic) {
-      setStatus(t('clapCalibrating'))
-      await sleep(1500) // let the detector measure the noise floor
-    }
-
     for (const round of rounds) {
       if (cancelledRef.current) return
       const tgt = round.target
       setTarget(tgt)
       setStatus('')
-      await speak(`${t('clapTargetIs')} ${tgt}`, lang)
-      await sleep(900)
+      // Ready gate — hear the target (replayable), then tap Begin to start.
+      setPhase('ready')
+      await speak(`${targetLabel} ${tgt}`, lang)
+      await waitForBegin()
+      if (cancelledRef.current) return
+      setPhase('running')
+      if (isMic && !threshRef.current.calibrated) await sleep(1400) // let the mic measure noise
 
       for (const word of round.words) {
         if (cancelledRef.current) return
@@ -244,6 +251,22 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
     )
   }
 
+  if (phase === 'ready') {
+    return (
+      <div className="page">
+        <Header t={t} activity={activity} lang={lang} level={levelData?.level || level} onBack={() => { cleanup(); onBack() }} />
+        <div className="card text-center" style={{ padding: '36px 24px' }}>
+          <p className="text-muted" style={{ fontSize: 16 }}>{targetLabel}</p>
+          <div style={{ fontSize: 44, fontWeight: 800, margin: '8px 0 24px' }}>{target}</div>
+          <button className="btn btn-ghost w-full" style={{ marginBottom: 12 }} onClick={replayTarget}>
+            <Icon name="replay" size={22} color="var(--primary-strong)" /> {t('clapReplay')}
+          </button>
+          <button className="btn btn-primary btn-lg w-full" onClick={onBeginRound}>{t('clapBegin')}</button>
+        </div>
+      </div>
+    )
+  }
+
   if (phase === 'running') {
     return (
       <div className="page">
@@ -251,7 +274,7 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
         <div className="card text-center" style={{ padding: '40px 24px' }}>
           {target && (
             <>
-              <p className="text-muted" style={{ fontSize: 16 }}>{t('clapTargetIs')}</p>
+              <p className="text-muted" style={{ fontSize: 16 }}>{targetLabel}</p>
               <div style={{ fontSize: 40, fontWeight: 800, margin: '8px 0 24px' }}>{target}</div>
             </>
           )}
