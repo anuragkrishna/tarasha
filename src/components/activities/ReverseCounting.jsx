@@ -75,7 +75,7 @@ export default function ReverseCounting({ activityId, level, exposure = 0, onDon
             <span key={i} style={{
               fontSize: 32, fontWeight: 700,
               background: i === shown.length - 1 ? 'var(--primary)' : 'var(--bg)',
-              color: i === shown.length - 1 ? 'white' : 'var(--text)',
+              color: i === shown.length - 1 ? 'var(--on-primary)' : 'var(--text)',
               padding: '8px 16px', borderRadius: 10,
               border: '2px solid var(--border)'
             }}>{n}</span>
@@ -84,7 +84,7 @@ export default function ReverseCounting({ activityId, level, exposure = 0, onDon
             fontSize: 32, fontWeight: 700,
             padding: '8px 16px', borderRadius: 10,
             border: `2px ${answered ? 'solid' : 'dashed'} ${feedback === 'wrong' ? 'var(--error)' : feedback === 'correct' ? 'var(--success)' : 'var(--primary)'}`,
-            background: feedback === 'correct' ? '#EAFAF1' : feedback === 'wrong' ? '#FDEDEC' : 'transparent',
+            background: feedback === 'correct' ? 'var(--ok-bg)' : feedback === 'wrong' ? 'var(--err-bg)' : 'transparent',
             color: feedback === 'wrong' ? 'var(--error)' : feedback === 'correct' ? 'var(--success)' : 'var(--primary)',
             minWidth: 64, textAlign: 'center'
           }}>{answered ? nextCorrect : '?'}</span>
@@ -113,7 +113,7 @@ export default function ReverseCounting({ activityId, level, exposure = 0, onDon
           <>
             <div style={{
               padding: 14, borderRadius: 12, marginBottom: 16,
-              background: feedback === 'correct' ? '#EAFAF1' : '#FDEDEC',
+              background: feedback === 'correct' ? 'var(--ok-bg)' : 'var(--err-bg)',
               color: feedback === 'correct' ? 'var(--success)' : 'var(--error)',
               fontWeight: 600, fontSize: 19, textAlign: 'center',
             }}>

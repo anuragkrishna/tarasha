@@ -6,19 +6,31 @@
 }
 
 :root {
-  --primary: #1B2A4E;
-  --primary-dark: #122038;
-  --accent: #3C89A8;
-  --success: #27AE60;
-  --error: #E74C3C;
-  --warning: #F39C12;
-  --bg: #FFFFFF;
-  --surface: #FFFFFF;
-  --text: #1A1A1A;
-  --text-muted: #6B6B6B;
-  --border: #ECECEC;
-  --radius: 16px;
-  --shadow: 0 1px 2px rgba(0,0,0,0.04);
+  /* Clay & Ink palette (no pure #fff / #000). All text pairs verified AA. */
+  --bg: #f4ece1;            /* warm off-white page */
+  --surface: #fbf5ec;       /* cards, sheets */
+  --ink: #33271f;           /* primary text */
+  --text: #33271f;
+  --muted: #6a5848;         /* secondary text (AA on surface & bg) */
+  --text-muted: #6a5848;
+  --primary: #c5613c;       /* clay / terracotta (fills, buttons) */
+  --primary-strong: #aa4b2b;/* clay for small text / info icons (AA) */
+  --primary-dark: #aa4b2b;
+  --accent: #aa4b2b;
+  --on-primary: #fff7f0;    /* text/icons on clay */
+  --accent-soft: #f1ddcb;   /* icon halos, soft fills, selection */
+  --line: #e6d8c8;
+  --border: #e6d8c8;
+  --success: #506b41;       /* gentle positive (AA as text) */
+  --error: #a24a36;         /* warm, de-emphasised (AA as text) */
+  --warning: #c98a3c;
+  --primary-glow: rgba(197,97,60,0.30);
+  /* feedback surfaces */
+  --ok-bg: #eef3e6;
+  --err-bg: #f6e6db;
+  --pick-bg: #f1ddcb;
+  --radius: 20px;
+  --shadow: 0 1px 2px rgba(51,39,31,0.06), 0 10px 24px rgba(51,39,31,0.05);
 }
 
 html, body {
@@ -27,10 +39,22 @@ html, body {
 }
 
 body {
-  font-family: 'Noto Sans', 'Noto Sans Devanagari', sans-serif;
+  font-family: 'Mulish', 'Noto Sans', 'Noto Sans Devanagari', sans-serif;
   background: var(--bg);
   color: var(--text);
   font-size: 20px;
+}
+
+/* Faint paper-grain over the whole app — subtle, non-interactive. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 #root {
@@ -72,10 +96,10 @@ body {
   justify-content: center;
   gap: 8px;
   padding: 16px 28px;
-  border-radius: 12px;
+  border-radius: 15px;
   border: none;
   font-size: 20px;
-  font-family: inherit;
+  font-family: 'Fraunces', 'Noto Sans Devanagari', serif;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.1s, opacity 0.1s;
@@ -90,7 +114,8 @@ body {
 
 .btn-primary {
   background: var(--primary);
-  color: white;
+  color: var(--on-primary);
+  box-shadow: 0 6px 18px var(--primary-glow);
 }
 
 .btn-primary:hover {
@@ -99,12 +124,12 @@ body {
 
 .btn-success {
   background: var(--success);
-  color: white;
+  color: var(--on-primary);
 }
 
 .btn-error {
   background: var(--error);
-  color: white;
+  color: var(--on-primary);
 }
 
 .btn-outline {
@@ -166,9 +191,10 @@ body {
   border-color: var(--primary);
 }
 
-/* Typography */
-h1 { font-size: 32px; font-weight: 700; }
-h2 { font-size: 26px; font-weight: 700; }
+/* Typography — Fraunces (display) for headings, Mulish for body. */
+h1, h2, h3 { font-family: 'Fraunces', 'Noto Sans Devanagari', serif; }
+h1 { font-size: 34px; font-weight: 700; }
+h2 { font-size: 27px; font-weight: 700; }
 h3 { font-size: 22px; font-weight: 600; }
 
 .text-muted { color: var(--text-muted); font-size: 18px; }

@@ -99,7 +99,7 @@ export default function CopyText({ activityId, level, exposure = 0, onDone, onBa
             marginTop: 12,
             padding: 12,
             borderRadius: 10,
-            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            background: isCorrect ? 'var(--ok-bg)' : 'var(--err-bg)',
             color: isCorrect ? 'var(--success)' : 'var(--error)',
             fontWeight: 600,
             fontSize: 18

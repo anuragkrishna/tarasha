@@ -40,7 +40,7 @@ export default function ProfileMenu({ user, configured, signIn, signOut, onViewL
         onClick={signIn}
         style={{
           display: 'inline-flex', alignItems: 'center', gap: 10,
-          background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: 8,
+          background: 'var(--primary)', color: 'var(--on-primary)', border: 'none', borderRadius: 8,
           padding: '10px 16px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
         }}
       >
@@ -110,7 +110,7 @@ export default function ProfileMenu({ user, configured, signIn, signOut, onViewL
                     fontFamily: 'inherit',
                     border: `2px solid ${lang === code ? 'var(--primary)' : 'var(--border)'}`,
                     background: lang === code ? 'var(--primary)' : 'var(--surface)',
-                    color: lang === code ? '#fff' : 'var(--text)',
+                    color: lang === code ? 'var(--on-primary)' : 'var(--text)',
                   }}
                 >
                   {label}

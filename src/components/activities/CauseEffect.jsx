@@ -90,7 +90,7 @@ export default function CauseEffect({ activityId, level, exposure = 0, onDone, o
                   ...cellBase,
                   cursor: causeMatched ? 'default' : 'pointer',
                   border: `3px solid ${causeSelected ? 'var(--primary)' : causeMatched ? 'var(--success)' : 'var(--border)'}`,
-                  background: causeSelected ? '#E6F7F4' : causeMatched ? '#EAFAF1' : 'var(--surface)',
+                  background: causeSelected ? 'var(--accent-soft)' : causeMatched ? 'var(--ok-bg)' : 'var(--surface)',
                   fontWeight: causeSelected ? 700 : 500,
                   opacity: causeMatched ? 0.7 : 1,
                 }}
@@ -103,7 +103,7 @@ export default function CauseEffect({ activityId, level, exposure = 0, onDone, o
                   ...cellBase,
                   cursor: effectMatched ? 'default' : 'pointer',
                   border: `3px solid ${effectWrong ? 'var(--error)' : effectMatched ? 'var(--success)' : selected !== null ? 'var(--primary)' : 'var(--border)'}`,
-                  background: effectWrong ? '#FDEDEC' : effectMatched ? '#EAFAF1' : selected !== null ? '#E6F7F4' : 'var(--surface)',
+                  background: effectWrong ? 'var(--err-bg)' : effectMatched ? 'var(--ok-bg)' : selected !== null ? 'var(--accent-soft)' : 'var(--surface)',
                   fontWeight: 500,
                   opacity: effectMatched ? 0.7 : 1,
                 }}

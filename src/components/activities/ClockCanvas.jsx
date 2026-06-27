@@ -68,7 +68,7 @@ export default function ClockCanvas({ resetKey }) {
     ctx.beginPath()
     ctx.moveTo(lastPos.current.x, lastPos.current.y)
     ctx.lineTo(pos.x, pos.y)
-    ctx.strokeStyle = '#1B2A4E'
+    ctx.strokeStyle = '#c5613c'
     ctx.lineWidth = 5
     ctx.lineCap = 'round'
     ctx.stroke()
@@ -83,7 +83,7 @@ export default function ClockCanvas({ resetKey }) {
 
   return (
     <div>
-      <div style={{ position: 'relative', width: 'fit-content', margin: '0 auto', borderRadius: 12, overflow: 'hidden', background: '#FAFAFA', border: '2px solid var(--border)', touchAction: 'none' }}>
+      <div style={{ position: 'relative', width: 'fit-content', margin: '0 auto', borderRadius: 12, overflow: 'hidden', background: 'var(--surface)', border: '2px solid var(--border)', touchAction: 'none' }}>
         <canvas ref={faceRef} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }} />
         <canvas
           ref={drawRef}

@@ -92,7 +92,7 @@ export default function MoneyTransaction({ activityId, level, onDone, onBack }) 
         <>
           <div style={{
             marginTop: 20, padding: 14, borderRadius: 12,
-            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            background: isCorrect ? 'var(--ok-bg)' : 'var(--err-bg)',
             color: isCorrect ? 'var(--success)' : 'var(--error)',
             fontWeight: 600, fontSize: 19, textAlign: 'center',
           }}>

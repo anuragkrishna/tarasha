@@ -105,7 +105,7 @@ function LogTab({ progress, t, lang }) {
             padding: '8px 18px', borderRadius: 20, fontSize: 16, fontFamily: 'inherit', cursor: 'pointer', fontWeight: 600,
             border: `2px solid ${filterDays === opt.days ? 'var(--primary)' : 'var(--border)'}`,
             background: filterDays === opt.days ? 'var(--primary)' : 'var(--surface)',
-            color: filterDays === opt.days ? 'white' : 'var(--text)',
+            color: filterDays === opt.days ? 'var(--on-primary)' : 'var(--text)',
           }}>{opt.label}</button>
         ))}
       </div>
@@ -287,7 +287,7 @@ export default function Progress({ onBack, progress }) {
             flex: 1, padding: '10px 8px', borderRadius: 12, fontSize: 17, fontFamily: 'inherit', cursor: 'pointer', fontWeight: 700,
             border: `2px solid ${tab === tb.id ? 'var(--primary)' : 'var(--border)'}`,
             background: tab === tb.id ? 'var(--primary)' : 'var(--surface)',
-            color: tab === tb.id ? 'white' : 'var(--text)',
+            color: tab === tb.id ? 'var(--on-primary)' : 'var(--text)',
           }}>{tb.label}</button>
         ))}
       </div>

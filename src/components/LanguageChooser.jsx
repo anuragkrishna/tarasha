@@ -7,7 +7,7 @@ export default function LanguageChooser() {
     <button
       onClick={() => setLang(code)}
       style={{
-        width: '100%', background: 'white', border: '1.5px solid var(--border)',
+        width: '100%', background: 'var(--surface)', border: '1.5px solid var(--border)',
         borderRadius: 16, padding: '22px 24px', cursor: 'pointer', fontFamily: 'inherit',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
         fontSize: 24, fontWeight: 700, color: 'var(--text)',

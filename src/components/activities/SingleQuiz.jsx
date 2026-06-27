@@ -6,10 +6,10 @@ import { useLang } from '../../i18n'
 function optionStyle(opt, selected, checked, answer) {
   const isSelected = selected === opt.label
   const isAnswer = opt.label === answer
-  if (checked && isAnswer) return { bg: '#EAFAF1', border: 'var(--success)' }
-  if (checked && isSelected && !isAnswer) return { bg: '#FDEDEC', border: 'var(--error)' }
-  if (!checked && isSelected) return { bg: '#EAF1FB', border: 'var(--primary)' }
-  return { bg: 'white', border: 'var(--border)' }
+  if (checked && isAnswer) return { bg: 'var(--ok-bg)', border: 'var(--success)' }
+  if (checked && isSelected && !isAnswer) return { bg: 'var(--err-bg)', border: 'var(--error)' }
+  if (!checked && isSelected) return { bg: 'var(--pick-bg)', border: 'var(--primary)' }
+  return { bg: 'var(--surface)', border: 'var(--border)' }
 }
 
 // One quiz question. Tap to select, Check to grade (feedback on the same screen),
@@ -96,7 +96,7 @@ export default function SingleQuiz({ question, isLast, onNext, onBack }) {
         {checked && (
           <div style={{
             width: '100%', padding: 14, borderRadius: 12,
-            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            background: isCorrect ? 'var(--ok-bg)' : 'var(--err-bg)',
             color: isCorrect ? 'var(--success)' : 'var(--error)',
             fontWeight: 600, fontSize: 19, textAlign: 'center',
           }}>

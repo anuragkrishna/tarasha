@@ -83,7 +83,7 @@ export default function SentenceRepeat({ activityId, level, exposure = 0, onDone
           </div>
           <div style={{
             width: 56, height: 56, borderRadius: '50%',
-            background: 'var(--primary)', color: 'white',
+            background: 'var(--primary)', color: 'var(--on-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 24, fontWeight: 700, margin: '0 auto'
           }}>{timeLeft}</div>
@@ -116,7 +116,7 @@ export default function SentenceRepeat({ activityId, level, exposure = 0, onDone
         <div className="card" style={{ marginTop: 40 }}>
           <div style={{
             padding: 12, borderRadius: 10, marginBottom: 16,
-            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            background: isCorrect ? 'var(--ok-bg)' : 'var(--err-bg)',
             color: isCorrect ? 'var(--success)' : 'var(--error)',
             fontWeight: 600, fontSize: 20
           }}>

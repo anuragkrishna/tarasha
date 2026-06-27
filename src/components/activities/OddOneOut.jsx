@@ -86,7 +86,7 @@ export default function OddOneOut({ activityId, level, onDone, onBack }) {
               key={i}
               onClick={() => handleSelect(item)}
               style={{
-                background: cardCorrect ? '#EAFAF1' : cardWrong ? '#FDEDEC' : 'white',
+                background: cardCorrect ? 'var(--ok-bg)' : cardWrong ? 'var(--err-bg)' : 'var(--surface)',
                 border: `3px solid ${cardCorrect ? 'var(--success)' : cardWrong ? 'var(--error)' : 'var(--border)'}`,
                 borderRadius: 20,
                 padding: '24px 16px',
@@ -110,7 +110,7 @@ export default function OddOneOut({ activityId, level, onDone, onBack }) {
         <>
           <div style={{
             marginTop: 16, padding: 14, borderRadius: 12,
-            background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+            background: isCorrect ? 'var(--ok-bg)' : 'var(--err-bg)',
             color: isCorrect ? 'var(--success)' : 'var(--error)',
             fontWeight: 600, fontSize: 19, textAlign: 'center',
           }}>

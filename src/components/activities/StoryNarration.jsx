@@ -72,7 +72,7 @@ export default function StoryNarration({ activityId, level, exposure = 0, onDone
             {story.panels.map((p, i) => (
               <div key={i} style={{
                 width: 56, height: 56, borderRadius: 10,
-                background: i === panelIndex ? 'var(--primary)' : i < panelIndex ? '#EAFAF1' : 'var(--bg)',
+                background: i === panelIndex ? 'var(--primary)' : i < panelIndex ? 'var(--ok-bg)' : 'var(--bg)',
                 border: `2px solid ${i === panelIndex ? 'var(--primary)' : 'var(--border)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 24, cursor: 'pointer'

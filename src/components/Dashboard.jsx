@@ -19,7 +19,7 @@ function PillarChips() {
           key={p.key}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
-            background: 'var(--bg-muted, #f1f3f5)', borderRadius: 999,
+            background: 'var(--accent-soft)', borderRadius: 999,
             padding: '6px 12px', fontSize: 13, fontWeight: 600, color: 'var(--text-muted)'
           }}
         >
@@ -34,7 +34,7 @@ function DifficultyChip({ level }) {
   const { t } = useLang()
   return (
     <span style={{
-      background: 'var(--primary)', color: '#fff', borderRadius: 999,
+      background: 'var(--primary)', color: 'var(--on-primary)', borderRadius: 999,
       padding: '3px 10px', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap'
     }}>
       🎓 {level ? t('lvl.' + level) : t('adaptive')}
@@ -58,7 +58,7 @@ function LessonTile({ n, level, status, count, onStart }) {
         padding: 16,
         cursor: locked ? 'default' : 'pointer',
         opacity: locked ? 0.55 : 1,
-        background: isCurrent ? 'var(--primary-soft, rgba(27,42,78,0.07))' : 'var(--surface)',
+        background: isCurrent ? 'rgba(197,97,60,0.08)' : 'var(--surface)',
         borderRadius: 14,
         border: isCurrent ? '2px solid var(--primary)' : '2px solid var(--border)',
         boxShadow: isCurrent ? 'none' : 'var(--shadow)',

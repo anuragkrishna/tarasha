@@ -88,7 +88,7 @@ export default function ItemsRecall({ activityId, level, exposure = 0, onDone, o
           </div>
           <div style={{
             width: 56, height: 56, borderRadius: '50%',
-            background: 'var(--primary)', color: 'white',
+            background: 'var(--primary)', color: 'var(--on-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 24, fontWeight: 700, margin: '0 auto'
           }}>{timeLeft}</div>
@@ -126,7 +126,7 @@ export default function ItemsRecall({ activityId, level, exposure = 0, onDone, o
               return (
                 <span key={i} style={{
                   padding: '8px 16px', borderRadius: 10, fontSize: 22, fontWeight: 600,
-                  background: found ? '#EAFAF1' : '#FDEDEC',
+                  background: found ? 'var(--ok-bg)' : 'var(--err-bg)',
                   color: found ? 'var(--success)' : 'var(--error)',
                   border: `2px solid ${found ? 'var(--success)' : 'var(--error)'}`
                 }}>

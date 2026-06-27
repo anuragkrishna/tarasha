@@ -78,7 +78,7 @@ export default function MemoryNumbers({ activityId, level, exposure = 0, onDone,
           </div>
           <div style={{
             width: 64, height: 64, borderRadius: '50%',
-            background: 'var(--primary)', color: 'white',
+            background: 'var(--primary)', color: 'var(--on-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 28, fontWeight: 700, margin: '0 auto'
           }}>
@@ -108,7 +108,7 @@ export default function MemoryNumbers({ activityId, level, exposure = 0, onDone,
             {submitted && (
               <div style={{
                 width: '100%', padding: 14, borderRadius: 12, textAlign: 'center',
-                background: isCorrect ? '#EAFAF1' : '#FDEDEC',
+                background: isCorrect ? 'var(--ok-bg)' : 'var(--err-bg)',
                 color: isCorrect ? 'var(--success)' : 'var(--error)', fontWeight: 600, fontSize: 19,
               }}>
                 {isCorrect ? `✓ ${t('correct')}` : `✗ ${t('notQuite')}`}

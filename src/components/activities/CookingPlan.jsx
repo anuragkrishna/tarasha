@@ -86,14 +86,14 @@ export default function CookingPlan({ activityId, level, exposure = 0, onDone, o
               style={{
                 display: 'flex', alignItems: 'center', gap: 12,
                 padding: '12px 16px', borderRadius: 10, marginBottom: 8,
-                background: isCorrect ? '#EAFAF1' : isWrong ? '#FDEDEC' : '#E6F7F4',
+                background: isCorrect ? 'var(--ok-bg)' : isWrong ? 'var(--err-bg)' : 'var(--accent-soft)',
                 border: `2px solid ${isCorrect ? 'var(--success)' : isWrong ? 'var(--error)' : 'var(--primary)'}`,
                 cursor: submitted ? 'default' : 'pointer', fontSize: 19
               }}
             >
               <span style={{
                 background: isCorrect ? 'var(--success)' : isWrong ? 'var(--error)' : 'var(--primary)',
-                color: 'white', borderRadius: '50%',
+                color: 'var(--on-primary)', borderRadius: '50%',
                 width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 700, fontSize: 16, flexShrink: 0
               }}>{i + 1}</span>
@@ -135,10 +135,10 @@ export default function CookingPlan({ activityId, level, exposure = 0, onDone, o
             <div key={i} style={{
               display: 'flex', gap: 12, alignItems: 'center',
               padding: '10px 14px', borderRadius: 10, marginBottom: 6,
-              background: '#EAFAF1', border: '2px solid var(--success)', fontSize: 19
+              background: 'var(--ok-bg)', border: '2px solid var(--success)', fontSize: 19
             }}>
               <span style={{
-                background: 'var(--success)', color: 'white', borderRadius: '50%',
+                background: 'var(--success)', color: 'var(--on-primary)', borderRadius: '50%',
                 width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 700, fontSize: 15, flexShrink: 0
               }}>{i + 1}</span>

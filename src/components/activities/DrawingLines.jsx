@@ -86,7 +86,7 @@ function scoreTrace(points, paths) {
 function drawGuide(ctx, paths, w, h) {
   ctx.clearRect(0, 0, w, h)
   ctx.setLineDash([12, 10])
-  ctx.strokeStyle = '#BBBBBB'
+  ctx.strokeStyle = '#8d7a66'
   ctx.lineWidth = 4
   paths.forEach(path => {
     ctx.beginPath()
@@ -148,7 +148,7 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
     ctx.beginPath()
     ctx.moveTo(lastPos.current.x, lastPos.current.y)
     ctx.lineTo(pos.x, pos.y)
-    ctx.strokeStyle = '#1B2A4E'
+    ctx.strokeStyle = '#c5613c'
     ctx.lineWidth = 6
     ctx.lineCap = 'round'
     ctx.stroke()
@@ -186,7 +186,7 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
       </div>
 
       <div className="card" style={{ position: 'relative', padding: 24, cursor: 'crosshair', touchAction: 'none' }}>
-        <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', background: '#FAFAFA', border: '2px solid var(--border)' }}>
+        <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', background: 'var(--surface)', border: '2px solid var(--border)' }}>
           {/* Guide canvas (dotted lines) */}
           <canvas
             ref={guideRef}
@@ -212,7 +212,7 @@ export default function DrawingLines({ activityId, level, onDone, onBack }) {
         {checked && (
           <div style={{
             width: '100%', padding: 16, borderRadius: 12,
-            background: '#EAFAF1', color: 'var(--success)',
+            background: 'var(--ok-bg)', color: 'var(--success)',
             fontWeight: 700, textAlign: 'center',
           }}>
             <div style={{ fontSize: 30 }}>{Math.round(score * 100)}%</div>

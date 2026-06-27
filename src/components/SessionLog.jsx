@@ -82,7 +82,7 @@ export default function SessionLog({ onBack, progress }) {
               fontFamily: 'inherit', cursor: 'pointer', fontWeight: 600,
               border: `2px solid ${filterDays === opt.days ? 'var(--primary)' : 'var(--border)'}`,
               background: filterDays === opt.days ? 'var(--primary)' : 'var(--surface)',
-              color: filterDays === opt.days ? 'white' : 'var(--text)',
+              color: filterDays === opt.days ? 'var(--on-primary)' : 'var(--text)',
             }}
           >
             {opt.label}
