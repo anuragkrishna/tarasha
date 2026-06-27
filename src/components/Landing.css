@@ -14,8 +14,8 @@
   --lp-body: 'Mulish', 'Noto Sans', 'Noto Sans Devanagari', sans-serif;
 
   position: relative;
-  min-height: 100vh;
-  height: 100vh;
+  min-height: calc(100vh / var(--zoom, 1));
+  height: calc(100vh / var(--zoom, 1));
   overflow-y: auto;            /* scroll if the content is taller than the screen */
   background: var(--lp-page);
   color: var(--lp-ink);
