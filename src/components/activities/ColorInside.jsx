@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { getActivityLevel, getActivity } from '../../data/activities'
 import { useLang, pickField } from '../../i18n'
+import { playCorrect, playWrong, playOutside } from '../../sound'
 
 // Hardcoded hex (Canvas can't read CSS custom properties).
 const FILL = '#c5613c'     // colour laid down inside the shape
@@ -65,7 +66,7 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
   const insidePts = useRef([])  // points painted inside (for coverage)
   const slipRef = useRef(0)     // points painted outside the line
   const totalRef = useRef(0)    // all painted points
-  const cueTimer = useRef(null)
+  const wasInsideRef = useRef(true) // tracks crossings so the buzz fires once per excursion
   const [checked, setChecked] = useState(false)
   const [score, setScore] = useState(0)
   const [outside, setOutside] = useState(false) // drives the red visual cue
@@ -81,19 +82,12 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
     const geom = makeShape(type, w, h)
     geomRef.current = geom
     drawShape(shape.getContext('2d'), geom, w, h)
-    return () => { if (cueTimer.current) clearTimeout(cueTimer.current) }
   }, [type])
 
   function getPos(e, canvas) {
     const rect = canvas.getBoundingClientRect()
     const touch = e.touches ? e.touches[0] : e
     return { x: touch.clientX - rect.left, y: touch.clientY - rect.top }
-  }
-
-  function flagOutside() {
-    setOutside(true)
-    if (cueTimer.current) clearTimeout(cueTimer.current)
-    cueTimer.current = setTimeout(() => setOutside(false), 600)
   }
 
   function paintPoint(ctx, p) {
@@ -107,9 +101,11 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
     } else {
       ctx.fillStyle = STRAY
       slipRef.current++
-      flagOutside()
+      setOutside(true)                       // note stays up while strays are on canvas
+      if (wasInsideRef.current) playOutside() // buzz once each time we cross out
     }
     ctx.fill()
+    wasInsideRef.current = inside
   }
 
   // Sub-sample along the stroke so fast moves are still classified accurately.
@@ -144,6 +140,7 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
     const c = canvasRef.current
     c.getContext('2d').clearRect(0, 0, c.width, c.height)
     insidePts.current = []; slipRef.current = 0; totalRef.current = 0
+    wasInsideRef.current = true
     setOutside(false)
   }
 
@@ -175,6 +172,7 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
     const sc = Math.max(0, Math.min(1, 0.55 * cov + 0.45 * inhibition))
     setScore(sc)
     setChecked(true)
+    if (sc >= 0.6) playCorrect(); else playWrong()
   }
 
   return (
@@ -208,14 +206,17 @@ export default function ColorInside({ activityId, level, onDone, onBack }) {
             onTouchMove={draw}
             onTouchEnd={stopDraw}
           />
-          {outside && (
-            <div style={{
-              position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
-              background: 'var(--error)', color: '#fff', padding: '6px 14px', borderRadius: 20,
-              fontWeight: 700, fontSize: 14, pointerEvents: 'none', whiteSpace: 'nowrap',
+        </div>
+        {/* Persistent note: stays up as long as any stroke is outside the line. */}
+        <div style={{ minHeight: 30, marginTop: 10, textAlign: 'center' }}>
+          {outside && !checked && (
+            <span style={{
+              display: 'inline-block',
+              background: 'var(--error)', color: '#fff', padding: '6px 16px',
+              borderRadius: 20, fontWeight: 700, fontSize: 15,
             }}>
-              {t('colorSlip')}
-            </div>
+              ⚠ {t('colorSlip')}
+            </span>
           )}
         </div>
       </div>

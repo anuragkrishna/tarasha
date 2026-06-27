@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useLang } from '../../i18n'
+import { playCorrect, playWrong } from '../../sound'
 
 // Option card colours: selected (pre-check) highlights blue; after Check the
 // correct answer turns green and a wrong pick turns red.
@@ -24,6 +25,7 @@ export default function SingleQuiz({ question, isLast, onNext, onBack }) {
   function check() {
     if (selected == null || checked) return
     setChecked(true)
+    if (isCorrect) playCorrect(); else playWrong()
   }
 
   return (
