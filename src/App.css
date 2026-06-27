@@ -70,6 +70,20 @@ body::before {
   background: var(--bg);
 }
 
+/* Tap / clap response feedback — an expanding ripple. */
+@keyframes tarasha-ripple {
+  from { transform: translate(-50%, -50%) scale(0.5); opacity: 0.55; }
+  to   { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+}
+.ripple {
+  position: absolute; top: 50%; left: 50%;
+  width: 90px; height: 90px; border-radius: 50%;
+  background: var(--primary-glow); pointer-events: none;
+  animation: tarasha-ripple 0.55s ease-out forwards;
+}
+.tap-btn { transition: transform 0.08s ease; }
+.tap-btn:active { transform: scale(0.96); }
+
 /* Lesson progress bar — fixed across the very top during a lesson. */
 .lesson-progress {
   position: fixed; top: 0; left: 0; right: 0; height: 6px;
