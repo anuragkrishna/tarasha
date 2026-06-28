@@ -53,15 +53,15 @@ function shuffle(arr) {
 // Each is a balanced mix (all 4 pillars represented, max 2 per pillar) run at a
 // fixed level. Levels ramp 1 → 2 → 3 across the ten lessons.
 export const PREBUILT = [
-  { level: 1, ids: ['odd-one-out', 'categorisation', 'memory-numbers', 'clap-when', 'color-inside', 'describe-picture', 'reverse-counting'] },
+  { level: 1, ids: ['odd-one-out', 'categorisation', 'memory-numbers', 'clap-when', 'color-inside', 'write-inside', 'describe-picture'] },
   { level: 1, ids: ['weights-concept', 'money-transaction', 'items-recall', 'reverse-counting', 'story-narration', 'breath-count', 'clap-when'] },
-  { level: 1, ids: ['odd-one-out', 'categorisation', 'sentence-repeat', 'cause-effect', 'picture-story', 'drawing-lines', 'describe-picture'] },
+  { level: 1, ids: ['odd-one-out', 'categorisation', 'sentence-repeat', 'write-inside', 'picture-story', 'drawing-lines', 'describe-picture'] },
   { level: 2, ids: ['weights-concept', 'money-transaction', 'cause-effect', 'memory-numbers', 'daily-events-recall', 'breath-count', 'clap-when'] },
   { level: 2, ids: ['odd-one-out', 'categorisation', 'color-inside', 'items-recall', 'story-narration', 'drawing-lines', 'describe-picture'] },
   { level: 2, ids: ['weights-concept', 'money-transaction', 'reverse-counting', 'delayed-recall', 'picture-story', 'breath-count', 'clap-when'] },
   { level: 3, ids: ['odd-one-out', 'money-transaction', 'color-inside', 'memory-numbers', 'sentence-repeat', 'drawing-lines', 'describe-picture'] },
   { level: 3, ids: ['weights-concept', 'categorisation', 'cooking-plan', 'items-recall', 'daily-events-recall', 'breath-count', 'clap-when'] },
-  { level: 3, ids: ['odd-one-out', 'money-transaction', 'cooking-plan', 'sentence-repeat', 'picture-story', 'drawing-lines', 'describe-picture'] },
+  { level: 3, ids: ['odd-one-out', 'money-transaction', 'write-inside', 'sentence-repeat', 'picture-story', 'drawing-lines', 'describe-picture'] },
   { level: 3, ids: ['weights-concept', 'categorisation', 'cause-effect', 'delayed-recall', 'story-narration', 'breath-count', 'clap-when'] },
 ]
 

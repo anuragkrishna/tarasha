@@ -12,6 +12,7 @@ import PictureStory from './components/activities/PictureStory'
 import StoryNarration from './components/activities/StoryNarration'
 import DrawingLines from './components/activities/DrawingLines'
 import ColorInside from './components/activities/ColorInside'
+import WriteInside from './components/activities/WriteInside'
 import CookingPlan from './components/activities/CookingPlan'
 import DelayedRecall from './components/activities/DelayedRecall'
 import DescribePicture from './components/activities/DescribePicture'
@@ -60,6 +61,7 @@ const ACTIVITY_COMPONENTS = {
   'story-narration': StoryNarration,
   'drawing-lines': DrawingLines,
   'color-inside': ColorInside,
+  'write-inside': WriteInside,
   'cooking-plan': CookingPlan,
   'delayed-recall': DelayedRecall,
   'describe-picture': DescribePicture,

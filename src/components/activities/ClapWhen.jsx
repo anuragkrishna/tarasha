@@ -4,7 +4,7 @@ import { useLang, pickField } from '../../i18n'
 import Icon from '../Icon'
 
 const MAX_STRIKES = 3
-const WINDOW_MS = 1800   // listening window after each word (generous, slow pace)
+const WINDOW_MS = 2300   // listening window after each word (generous, slow pace)
 const CLAP_MAX_MS = 180  // a clap is a short, sharp burst
 const VOICE_MIN_MS = 220 // sustained sound = talking, not a clap
 
@@ -28,8 +28,9 @@ function buildRound(pool, lang) {
   const target = order[0]
   const distractorPool = order.slice(1)
 
-  const targetCount = 4 + Math.floor(Math.random() * 4)        // 4–7 claps (randomized)
-  const distractorCount = 9 + Math.floor(Math.random() * 5)    // 9–13 → ~13–20 words total
+  const TOTAL = 20                                       // total words spoken
+  const targetCount = 4 + Math.floor(Math.random() * 2) // 4–5 claps, spread randomly
+  const distractorCount = TOTAL - targetCount           // → always 20 words
 
   // A varied stream of distractors (no immediate repeats where possible).
   const distractors = []
@@ -64,7 +65,7 @@ function speak(text, lang) {
       if (!synth) return resolve()
       const u = new SpeechSynthesisUtterance(text)
       u.lang = lang === 'hi' ? 'hi-IN' : 'en-IN'
-      u.rate = 0.8
+      u.rate = 0.75
       let done = false
       const finish = () => { if (!done) { done = true; resolve() } }
       u.onend = finish
@@ -234,7 +235,7 @@ export default function ClapWhen({ activityId, level, exposure = 0, onDone, onBa
       setHits(localHits)
       setStrikes(localStrikes)
       if (localStrikes >= MAX_STRIKES) { failed = true; break }
-      await sleep(700)
+      await sleep(1100)
     }
 
     setAutoPass(!failed)

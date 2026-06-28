@@ -694,6 +694,21 @@ export const ACTIVITIES = [
   },
 
   {
+    id: 'write-inside',
+    category: 'Topic Maintenance',
+    title: 'Write in the Box',
+    title_hi: 'डिब्बे में लिखो',
+    icon: '✍️',
+    description: 'Trace the number or letter — stay inside the box',
+    description_hi: 'नंबर या अक्षर बनाएँ — डिब्बे के अंदर रहें',
+    levels: [
+      { level: 1, kind: 'digit', label: 'Trace the number', label_hi: 'नंबर बनाएँ' },
+      { level: 2, kind: 'letter', label: 'Trace the letter', label_hi: 'अक्षर बनाएँ' },
+      { level: 3, kind: 'number2', label: 'Trace the number', label_hi: 'नंबर बनाएँ' },
+    ]
+  },
+
+  {
     id: 'cooking-plan',
     category: 'Learning',
     title: 'Cooking Plan',

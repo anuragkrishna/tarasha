@@ -226,6 +226,10 @@ const STRINGS = {
     colorSlips: 'Times you went outside: {n}',
     colorAvgLabel: 'How well you stayed inside the lines',
 
+    // Write in the box (inhibition)
+    writeRule: 'Trace it. Stay inside the box.',
+    writeAvgLabel: 'How well you stayed inside the box',
+
     // Breath count
     breathFollow: 'Follow the circle. Breathe in as it grows, out as it shrinks. Count each breath.',
     breathOf: 'Breath {i} of {n}',
@@ -549,6 +553,9 @@ const STRINGS = {
     colorSlip: 'लाइन से बाहर!',
     colorSlips: 'आप कितनी बार बाहर गए: {n}',
     colorAvgLabel: 'आप लाइन के अंदर कितना रहे',
+
+    writeRule: 'ऊपर बनाएँ। डिब्बे के अंदर ही रहें।',
+    writeAvgLabel: 'आप डिब्बे के अंदर कितना रहे',
 
     breathFollow: 'गोले को देखें। बड़ा हो तो साँस लें, छोटा हो तो छोड़ें। हर साँस गिनें।',
     breathOf: 'साँस {i}/{n}',
